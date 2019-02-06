@@ -15,15 +15,15 @@ s.sequence_add(
     enabled= True
 )
 
-for i in range(200):
+for i in range(1000):
     s.sequence_add(
         name= 'a' + str(i),
-        length= 4,
+        length= 180,
         address= '/c3',
         note=True,
         events= {
           0: 1,
-          2: 2,
+          90: 2,
         },
         enabled=True
     )

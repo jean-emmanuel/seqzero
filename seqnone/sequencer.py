@@ -13,6 +13,7 @@ class Sequencer():
         self.target = 'osc.udp://127.0.0.1:5555'
 
         self.jack_client = pyo.Server(audio='jack', nchnls=0, jackname='SeqNone')
+        self.jack_client.deactivateMidi()
         self.jack_client.boot()
         self.jack_client.start()
 
@@ -36,7 +37,10 @@ class Sequencer():
 
     def play(self):
 
-        self.clock.play()
+        if self.clock.isPlaying():
+            self.trig()
+        else:
+            self.clock.play()
 
     def pause(self):
 
@@ -45,6 +49,9 @@ class Sequencer():
     def trig(self):
 
         self.cursor = 0
+
+        if not self.clock.isPlaying():
+            self.play()
 
     def set_bpm(self, bpm):
 
