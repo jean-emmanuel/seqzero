@@ -1,16 +1,14 @@
 import pyo
 import liblo
 import json
+import re
 
 from .sequence import Sequence
-
-MIN_BPM = 40
-MAX_BPM = 440
-PPQN = 192
+from .config import MIN_BPM, MAX_BPM, DEFAULT_BPM, PPQN
 
 class Sequencer():
 
-    def __init__(self):
+    def __init__(self, target, bpm=DEFAULT_BPM):
 
         self.target = 'osc.udp://127.0.0.1:5555'
 
@@ -18,7 +16,7 @@ class Sequencer():
         self.jack_client.boot()
         self.jack_client.start()
 
-        self.bpm = 440
+        self.bpm = bpm
         self.cursor = 0
 
         self.clock = pyo.Pattern(self.next_tick)
@@ -26,6 +24,9 @@ class Sequencer():
         self.set_bpm(self.bpm)
 
         self.sequences = {}
+        self.active_sequences = []
+
+        self.osc_queue = []
 
     def next_tick(self):
 
@@ -52,28 +53,53 @@ class Sequencer():
 
     def process(self):
 
-        events = []
+        cursor = self.cursor
 
-        for name in self.sequences:
+        for sequence in self.active_sequences:
 
-            sequence = self.sequences[name]
+            sequence.play(cursor)
 
-            if sequence.enabled:
+        if len(self.osc_queue):
 
-                sequence_cursor = self.cursor % sequence.length
-
-                if sequence_cursor in sequence.events:
-
-                    events.append(sequence.events[sequence_cursor])
-
-        if len(events):
-
-            liblo.send(self.target, liblo.Bundle(*events))
+            liblo.send(self.target, liblo.Bundle(*self.osc_queue))
+            self.osc_queue = []
 
 
+    def send(self, event):
 
+        self.osc_queue.append(event)
+
+
+    def sequence_get(self, name):
+
+        sequences = []
+        for n in self.sequences:
+            if re.match(name, n):
+                sequences.push(self.sequences[n])
+        return sequences
 
     def sequence_add(self, **kwargs):
 
-        sequence = Sequence(**kwargs)
+        sequence = Sequence(parent=self, **kwargs)
         self.sequences[sequence.name] = sequence
+
+    def sequence_remove(self, name):
+
+        for s in self.sequence_get(name):
+            s.disable()
+            del self.sequences[s.name]
+
+    def sequence_enable(self, name):
+
+        for s in self.sequence_get(name):
+            s.enable()
+
+    def sequence_disable(self, name):
+
+        for s in self.sequence_get(name):
+            s.disable()
+
+    def sequence_toggle(self, name, state):
+
+        for s in self.sequence_get(name):
+            s.toggle(state)
