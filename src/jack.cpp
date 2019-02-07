@@ -7,7 +7,7 @@
 Jack::Jack()
 {
 
-    client_name = "SeqOne";
+    client_name = "SeqZero";
 
 }
 

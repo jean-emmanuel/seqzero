@@ -9,7 +9,7 @@ namespace Config
     const int MAX_BPM = 440;
 
     const int PPQN = 192;
-    const int MAX_SEQUENCES = 2048;
+
 }
 
 #endif
