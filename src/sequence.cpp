@@ -1,15 +1,12 @@
-#include <lo/lo.h>
-
 #include "sequence.hpp"
-#include "osc.hpp"
-
+#include "sequencer.hpp"
 
 Sequence::Sequence(){} // empty default constructor for std::map
 
-Sequence::Sequence(Osc *osc_server, const char* osc_address, const char* osc_type, std::map<int, double> v, int seq_length, bool state, bool is_note)
+Sequence::Sequence(Sequencer *seq, const char* osc_address, const char* osc_type, std::map<int, double> v, int seq_length, bool state, bool is_note)
 {
 
-    osc = osc_server;
+    sequencer = seq;
 
     address = osc_address;
     type = osc_type;
@@ -42,7 +39,7 @@ void Sequence::disable()
 
     if (enabled && note_on) {
         note_on = false;
-        osc->send(address, type, 0);
+        sequencer->send(address, type, 0);
     }
 
     enabled = false;
@@ -67,7 +64,7 @@ void Sequence::play(int c)
 
     if (values.find(cursor) != values.end()) {
 
-        osc->send(address, type, values[cursor]);
+        sequencer->send(address, type, values[cursor]);
 
         if (note) {
             note_on = values[cursor] > 0;

@@ -2,8 +2,6 @@
 
 #include "jack.hpp"
 #include "sequencer.hpp"
-#include "osc.hpp"
-
 
 int main()
 {
@@ -12,9 +10,7 @@ int main()
 
     jack.connect();
 
-    Osc osc = Osc("osc.udp://127.0.0.1:5555");
-
-    Sequencer sequencer = Sequencer(jack, &osc);
+    Sequencer sequencer = Sequencer(jack, "osc.udp://127.0.0.1:5555");
 
     const char* address = "/test";
     const char* type = "f";

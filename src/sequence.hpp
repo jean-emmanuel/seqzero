@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include "osc.hpp"
+class Sequencer;
 
 class Sequence
 {
@@ -10,10 +10,10 @@ class Sequence
 
         Sequence(); // empty default constructor for std::map
 
-        Sequence(Osc *osc_server, const char* osc_address, const char* osc_type, std::map<int, double> values, int seq_length, bool enabled, bool is_note);
+        Sequence(Sequencer *seq, const char* osc_address, const char* osc_type, std::map<int, double> values, int seq_length, bool enabled, bool is_note);
         ~Sequence();
 
-        Osc *osc;
+        Sequencer *sequencer;
 
         const char* address;
         const char* type;

@@ -1,19 +1,17 @@
 #include <map>
+#include <lo/lo.h>
 
+#include "sequence.hpp"
 #include "config.hpp"
 #include "jack.hpp"
-#include "sequence.hpp"
-
 
 class Sequencer
 {
 
     public:
 
-        Sequencer(Jack jack, Osc *osc_server);
+        Sequencer(Jack jack, const char* str_url);
         ~Sequencer();
-
-        Osc *osc;
 
         int sample_rate;
 
@@ -41,5 +39,9 @@ class Sequencer
         void sequence_enable(const char* address);
         void sequence_disable(const char* address);
         void sequence_toggle(const char* address);
+
+        void send(const char* address, const char* type, double value);
+
+        lo_address url;
 
 };

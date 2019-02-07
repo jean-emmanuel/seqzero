@@ -2,6 +2,7 @@
 #include <jack/jack.h>
 
 #include "sequencer.hpp"
+#include "sequence.hpp"
 #include "config.hpp"
 #include "jack.hpp"
 
@@ -27,15 +28,15 @@ int jack_callback (jack_nframes_t nframes, void *arg)
 
 }
 
-Sequencer::Sequencer(Jack jack, Osc *osc_server)
+Sequencer::Sequencer(Jack jack, const char* str_url)
 {
-
-    osc = osc_server;
 
     playing = false;
 
     cursor = 0;
     elapsed_samples = 0;
+
+    url = lo_address_new_from_url(str_url);
 
     sample_rate = jack_get_sample_rate(jack.jack_client);
 
@@ -48,6 +49,8 @@ Sequencer::Sequencer(Jack jack, Osc *osc_server)
 
 Sequencer::~Sequencer()
 {
+
+    lo_address_free(url);
 
 }
 
@@ -116,7 +119,7 @@ void Sequencer::sequence_add(const char* address, const char* type,
                     std::map<int, double> values, int length, bool enabled, bool is_note)
 {
 
-    sequences[address] = Sequence(osc, address, type, values, length, enabled, is_note);
+    sequences[address] = Sequence(this, address, type, values, length, enabled, is_note);
 
 }
 
@@ -151,6 +154,18 @@ void Sequencer::sequence_toggle(const char* address)
 
     if (sequences.find(address) != sequences.end()) {
         sequences[address].toggle();
+    }
+
+}
+
+void Sequencer::send(const char* address, const char* type, double value)
+{
+
+    if (strcmp(type, "i") == 0) {
+        int ivalue = value;
+        lo_send(url, address, type, ivalue);
+    } else {
+        lo_send(url, address, type, value);
     }
 
 }
