@@ -22,7 +22,7 @@ int main()
     values[91] = 2;
     sequencer.sequence_add(address, type, values, length, enabled, is_note);
 
-    sequencer.play();
+    // sequencer.play();
 
     while (1) {
         sleep(1);

@@ -31,19 +31,21 @@ int jack_callback (jack_nframes_t nframes, void *arg)
 Sequencer::Sequencer(Jack jack, const char* str_url)
 {
 
-    playing = false;
+    // Engine
 
-    cursor = 0;
     elapsed_samples = 0;
-
-    url = lo_address_new_from_url(str_url);
-
     sample_rate = jack_get_sample_rate(jack.jack_client);
+    jack.set_callback(jack_callback, this);
 
+    // Transport
+
+    playing = false;
+    cursor = 0;
     set_bpm(Config::DEFAULT_BPM);
 
-    jack.set_callback(jack_callback, this);
-    // fprintf (stderr,"%i",sample_rate);
+    // Osc
+
+    url = lo_address_new_from_url(str_url);
 
 }
 
