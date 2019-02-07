@@ -1,4 +1,9 @@
+#include <cstring>
+#include <cstdio>
+
 #include "osc.hpp"
+
+const char* int_type = "i";
 
 Osc::Osc(const char* str_url)
 {
@@ -17,13 +22,11 @@ Osc::~Osc()
 void Osc::send(const char* address, const char* type, double value)
 {
 
-    // if (type == "i") {
-    //     // fprintf (stderr,"i");
-    //     int ivalue = value;
-    //     lo_send(url, address, type, ivalue);
-    // } else {
+    if (strcmp(type, "i") == 0) {
+        int ivalue = value;
+        lo_send(url, address, type, ivalue);
+    } else {
         lo_send(url, address, type, value);
-    // }
-
+    }
 
 }

@@ -21,7 +21,7 @@ class Sequencer
         double elapsed_samples;
 
         float bpm;
-        int cursor;
+        long cursor;
 
         bool playing;
 
