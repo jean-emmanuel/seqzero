@@ -49,9 +49,10 @@ Sequencer::Sequencer(Jack jack, Osc *osc_server)
     std::map<int, double> values;
     bool enabled = true;
     bool is_note = false;
+    int length = 192;
     values[0] = 1;
     values[91] = 2;
-    sequence_add(address, type, values, enabled, is_note);
+    sequence_add(address, type, values, length, enabled, is_note);
 
 
 }
@@ -123,10 +124,10 @@ void Sequencer::trig() {
 }
 
 void Sequencer::sequence_add(const char* address, const char* type,
-                    std::map<int, double> values, bool enabled, bool is_note)
+                    std::map<int, double> values, int length, bool enabled, bool is_note)
 {
 
-    sequences[address] = Sequence(osc, address, type, values, enabled, is_note);
+    sequences[address] = Sequence(osc, address, type, values, length, enabled, is_note);
 
 }
 

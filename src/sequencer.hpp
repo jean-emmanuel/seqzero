@@ -36,7 +36,7 @@ class Sequencer
 
         std::map<const char*, Sequence> sequences;
 
-        void sequence_add(const char* address, const char* type, std::map<int, double> values, bool enabled, bool is_note);
+        void sequence_add(const char* address, const char* type, std::map<int, double> values, int length, bool enabled, bool is_note);
         void sequence_remove(const char* address);
         void sequence_enable(const char* address);
         void sequence_disable(const char* address);

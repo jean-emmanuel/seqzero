@@ -6,7 +6,7 @@
 
 Sequence::Sequence(){} // empty default constructor for std::map
 
-Sequence::Sequence(Osc *osc_server, const char* osc_address, const char* osc_type, std::map<int, double> v, bool state, bool is_note)
+Sequence::Sequence(Osc *osc_server, const char* osc_address, const char* osc_type, std::map<int, double> v, int seq_length, bool state, bool is_note)
 {
 
     osc = osc_server;
@@ -16,7 +16,7 @@ Sequence::Sequence(Osc *osc_server, const char* osc_address, const char* osc_typ
 
     enabled = state;
     values = v;
-    length = 192;
+    length = seq_length;
 
     note = is_note;
     note_on = false;
