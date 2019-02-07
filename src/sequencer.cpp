@@ -1,4 +1,4 @@
-#include <string>
+#include <cstring>
 #include <jack/jack.h>
 
 #include "sequencer.hpp"
@@ -51,7 +51,6 @@ Sequencer::Sequencer(Jack jack, Osc *osc_server)
     bool is_note = false;
     values[0] = 1;
     values[91] = 2;
-
     sequence_add(address, type, values, enabled, is_note);
 
 

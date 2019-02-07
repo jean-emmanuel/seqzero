@@ -26,6 +26,8 @@ Sequence::Sequence(Osc *osc_server, const char* osc_address, const char* osc_typ
 Sequence::~Sequence()
 {
 
+    disable();
+
 }
 
 void Sequence::enable()
@@ -40,7 +42,7 @@ void Sequence::disable()
 
     if (enabled && note_on) {
         note_on = false;
-        // send note off
+        osc->send(address, type, 0);
     }
 
     enabled = false;
@@ -68,7 +70,7 @@ void Sequence::play(int c)
         osc->send(address, type, values[cursor]);
 
         if (note) {
-            // check value and toggle note_on flag
+            note_on = values[cursor] > 0;
         }
 
     }
