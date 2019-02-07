@@ -1,4 +1,4 @@
-# SeqNone
+# seqzero-2
 
 Utra-minimalist osc sequencer
 
@@ -27,4 +27,4 @@ Ideas
 - gui : ideally, something like seq24's
   - communicates with the engine using osc
   - handles all the sequence grouping logic
-  - 1 sequence group = pianoroll (1 sequence for each non-empty note) + controls (1 sequence per line); grouped sequences would share the same address prefix 
+  - 1 sequence group = pianoroll (1 sequence for each non-empty note) + controls (1 sequence per line); grouped sequences would share the same address prefix
