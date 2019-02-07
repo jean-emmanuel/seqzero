@@ -12,6 +12,8 @@ int jack_callback (jack_nframes_t nframes, void *arg)
 
 	int i;
 
+    if (!sequencer->playing) return 0;
+
 	for(i=0; i < nframes; i++)
 	{
         sequencer->elapsed_samples += 1;
@@ -25,8 +27,12 @@ int jack_callback (jack_nframes_t nframes, void *arg)
 
 }
 
-Sequencer::Sequencer(Jack jack)
+Sequencer::Sequencer(Jack jack, Osc *osc_server)
 {
+
+    osc = osc_server;
+
+    playing = false;
 
     cursor = 0;
     elapsed_samples = 0;
@@ -38,6 +44,16 @@ Sequencer::Sequencer(Jack jack)
     jack.set_callback(jack_callback, this);
     // fprintf (stderr,"%i",sample_rate);
 
+    const char* address = "/test";
+    const char* type = "i";
+    std::map<int, double> values;
+    bool enabled = true;
+    bool is_note = false;
+    values[1] = 12;
+    values[91] = 12;
+
+    sequence_add(address, type, values, enabled, is_note);
+
 
 }
 
@@ -46,7 +62,7 @@ Sequencer::~Sequencer()
 
 }
 
-void Sequencer::set_period(float p)
+void Sequencer::set_period(double p)
 {
 
     period = p * sample_rate;
@@ -73,6 +89,9 @@ void Sequencer::play_current()
 
     // fprintf (stderr,"%i", cursor);
     cursor += 1;
+    for (auto& item: sequences) {
+        item.second.play(cursor);
+    }
     // loop through sequences...
 
 }
@@ -105,9 +124,44 @@ void Sequencer::trig() {
 
 }
 
-void Sequencer::sequence_add(std::string address, std::map<int, float> values)
+void Sequencer::sequence_add(const char* address, const char* type, std::map<int, double> values, bool enabled, bool is_note)
 {
 
-    sequences[address] = Sequence(values);
+    sequences[address] = Sequence(osc, address, type, values, enabled, is_note);
+
+}
+
+void Sequencer::sequence_remove(const char* address)
+{
+
+    std::map<const char*, Sequence>::iterator it = sequences.find(address);
+    sequences.erase(it);
+
+}
+
+void Sequencer::sequence_enable(const char* address)
+{
+
+    if (sequences.find(address) != sequences.end()) {
+        sequences[address].enable();
+    }
+
+}
+
+void Sequencer::sequence_disable(const char* address)
+{
+
+    if (sequences.find(address) != sequences.end()) {
+        sequences[address].disable();
+    }
+
+}
+
+void Sequencer::sequence_toggle(const char* address)
+{
+
+    if (sequences.find(address) != sequences.end()) {
+        sequences[address].toggle();
+    }
 
 }

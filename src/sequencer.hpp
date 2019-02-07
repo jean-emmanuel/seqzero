@@ -10,20 +10,22 @@ class Sequencer
 
     public:
 
-        Sequencer(Jack jack);
+        Sequencer(Jack jack, Osc *osc_server);
         ~Sequencer();
+
+        Osc *osc;
 
         int sample_rate;
 
-        float period;
-        float elapsed_samples;
+        double period;
+        double elapsed_samples;
 
         float bpm;
         int cursor;
 
         bool playing;
 
-        void set_period(float period);
+        void set_period(double period);
         void set_bpm(float bpm);
         void play_current();
 
@@ -32,8 +34,12 @@ class Sequencer
         void trig();
 
 
-        std::map<std::string, Sequence> sequences;
+        std::map<const char*, Sequence> sequences;
 
-        void sequence_add(std::string address, std::map<int, float> values);
+        void sequence_add(const char* address, const char* type, std::map<int, double> values, bool enabled, bool is_note);
+        void sequence_remove(const char* address);
+        void sequence_enable(const char* address);
+        void sequence_disable(const char* address);
+        void sequence_toggle(const char* address);
 
 };
