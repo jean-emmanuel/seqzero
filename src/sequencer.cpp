@@ -44,17 +44,6 @@ Sequencer::Sequencer(Jack jack, Osc *osc_server)
     jack.set_callback(jack_callback, this);
     // fprintf (stderr,"%i",sample_rate);
 
-    const char* address = "/test";
-    const char* type = "f";
-    std::map<int, double> values;
-    bool enabled = true;
-    bool is_note = false;
-    int length = 192;
-    values[0] = 1;
-    values[91] = 2;
-    sequence_add(address, type, values, length, enabled, is_note);
-
-
 }
 
 Sequencer::~Sequencer()

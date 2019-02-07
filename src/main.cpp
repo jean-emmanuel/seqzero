@@ -15,6 +15,17 @@ int main()
     Osc osc = Osc("osc.udp://127.0.0.1:5555");
 
     Sequencer sequencer = Sequencer(jack, &osc);
+
+    const char* address = "/test";
+    const char* type = "f";
+    std::map<int, double> values;
+    bool enabled = true;
+    bool is_note = false;
+    int length = 192;
+    values[0] = 1;
+    values[91] = 2;
+    sequencer.sequence_add(address, type, values, length, enabled, is_note);
+
     sequencer.play();
 
     while (1) {
