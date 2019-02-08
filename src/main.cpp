@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 
     Sequencer sequencer = Sequencer(jack, argv[1], "osc.udp://127.0.0.1:5555");
 
-    const char* address = "/test";
+    const char* address = "/1";
     const char* type = "f";
     std::map<int, double> values;
     bool enabled = true;
@@ -21,6 +21,10 @@ int main(int argc, char* argv[])
     values[0] = 1;
     values[91] = 2;
     sequencer.sequence_add(address, type, values, length, enabled, is_note);
+
+    const char* address2 = "/2";;
+    sequencer.sequence_add(address2, type, values, length, enabled, is_note);
+
 
     // sequencer.play();
 

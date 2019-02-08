@@ -39,13 +39,10 @@ class Sequencer
 
         // Sequences
 
-        std::map<const char*, Sequence> sequences;
+        std::map<std::string, Sequence> sequence_map;
 
-        void sequence_add(const char* address, const char* type, std::map<int, double> values, int length, bool enabled, bool is_note);
-        void sequence_remove(const char* address);
-        void sequence_enable(const char* address);
-        void sequence_disable(const char* address);
-        void sequence_toggle(const char* address);
+        void sequence_add(std::string address, const char* type, std::map<int, double> values, int length, bool enabled, bool is_note);
+        void sequence_control(std::string address, int command);
 
         // Osc
 
@@ -54,11 +51,26 @@ class Sequencer
         lo_server osc_server;
 
         void osc_init();
-        void osc_send(const char* address, const char* type, double value);
+        void osc_send(std::string address, const char* type, double value);
 
         static int osc_play_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
         static int osc_pause_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
         static int osc_stop_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
         static int osc_trig_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
+        static int osc_seqctrl_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
+
+        enum {
+            SEQ_ENABLE = 1,
+            SEQ_DISABLE = 2,
+            SEQ_TOGGLE = 3,
+            SEQ_REMOVE = 4
+        };
+
+        std::map<std::string, int> osc_sequence_commands = {
+            {"enable",  SEQ_ENABLE},
+            {"disable", SEQ_DISABLE},
+            {"toggle",  SEQ_TOGGLE},
+            {"remove",  SEQ_REMOVE}
+        };
 
 };

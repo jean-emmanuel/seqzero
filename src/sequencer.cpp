@@ -84,7 +84,7 @@ int Sequencer::jack_callback (jack_nframes_t nframes, void *arg)
 void Sequencer::play_current()
 {
 
-    for (auto& item: sequences) {
+    for (auto& item: sequence_map) {
         item.second.play(cursor);
     }
 
@@ -128,49 +128,34 @@ void Sequencer::trig() {
 
 }
 
-void Sequencer::sequence_add(const char* address, const char* type,
+void Sequencer::sequence_add(std::string address, const char* type,
                     std::map<int, double> values, int length, bool enabled, bool is_note)
 {
 
-    sequences[address] = Sequence(this, address, type, values, length, enabled, is_note);
+    sequence_map[address] = Sequence(this, address, type, values, length, enabled, is_note);
 
 }
 
-void Sequencer::sequence_remove(const char* address)
+void Sequencer::sequence_control(std::string address, int command)
 {
 
-    std::map<const char*, Sequence>::iterator it = sequences.find(address);
-    sequences.erase(it);
-
-}
-
-void Sequencer::sequence_enable(const char* address)
-{
-
-    if (sequences.find(address) != sequences.end()) {
-        sequences[address].enable();
+    switch(command) {
+        case SEQ_ENABLE:
+            sequence_map[address].enable();
+            break;
+        case SEQ_DISABLE:
+            sequence_map[address].disable();
+            break;
+        case SEQ_TOGGLE:
+            sequence_map[address].toggle();
+            break;
+        case SEQ_REMOVE:
+            std::map<std::string, Sequence>::iterator it = sequence_map.find(address);
+            sequence_map.erase(it);
+            break;
     }
 
 }
-
-void Sequencer::sequence_disable(const char* address)
-{
-
-    if (sequences.find(address) != sequences.end()) {
-        sequences[address].disable();
-    }
-
-}
-
-void Sequencer::sequence_toggle(const char* address)
-{
-
-    if (sequences.find(address) != sequences.end()) {
-        sequences[address].toggle();
-    }
-
-}
-
 
 void osc_error(int num, const char *m, const char *path)
 {
@@ -192,20 +177,21 @@ void Sequencer::osc_init()
     lo_server_thread_add_method(osc_server, "/pause", NULL, Sequencer::osc_pause_handler, this);
     lo_server_thread_add_method(osc_server, "/stop", NULL, Sequencer::osc_stop_handler, this);
     lo_server_thread_add_method(osc_server, "/trig", NULL, Sequencer::osc_trig_handler, this);
+    lo_server_thread_add_method(osc_server, "/sequence", "ss", Sequencer::osc_seqctrl_handler, this);
 
 
     lo_server_thread_start(osc_server);
 }
 
 
-void Sequencer::osc_send(const char* address, const char* type, double value)
+void Sequencer::osc_send(std::string address, const char* type, double value)
 {
 
     if (strcmp(type, "i") == 0) {
         int ivalue = value;
-        lo_send(osc_target, address, type, ivalue);
+        lo_send(osc_target, address.c_str(), type, ivalue);
     } else {
-        lo_send(osc_target, address, type, value);
+        lo_send(osc_target, address.c_str(), type, value);
     }
 
 }
@@ -235,5 +221,42 @@ int Sequencer::osc_trig_handler(const char *path, const char *types, lo_arg **ar
 {
     Sequencer *sequencer = (Sequencer *) user_data;
     sequencer->trig();
+	return 0;
+}
+
+
+int Sequencer::osc_seqctrl_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
+{
+
+    Sequencer *sequencer = (Sequencer *) user_data;
+
+    std::string address = &argv[0]->s;
+    std::string command_str = &argv[1]->s;
+
+    int command = sequencer->osc_sequence_commands[command_str];
+
+    if (!command) return 0;
+
+    if (sequencer->sequence_map.find(address) != sequencer->sequence_map.end()) {
+        sequencer->sequence_control(address, command);
+
+    } else {
+
+        for (auto item = sequencer->sequence_map.cbegin(); item != sequencer->sequence_map.cend();) {
+
+            std::string item_address = item->second.address;
+            item++;
+
+            if (lo_pattern_match(item_address.c_str(), address.c_str())) {
+
+                sequencer->sequence_control(item_address, command);
+
+            }
+
+        }
+
+    }
+
+
 	return 0;
 }

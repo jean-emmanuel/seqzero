@@ -3,7 +3,7 @@
 
 Sequence::Sequence(){} // empty default constructor for std::map
 
-Sequence::Sequence(Sequencer *seq, const char* osc_address, const char* osc_type, std::map<int, double> v, int seq_length, bool state, bool is_note)
+Sequence::Sequence(Sequencer *seq, std::string osc_address, const char* osc_type, std::map<int, double> v, int seq_length, bool state, bool is_note)
 {
 
     sequencer = seq;
@@ -61,7 +61,7 @@ void Sequence::play(int c)
 {
 
     if (!enabled) return;
-    
+
     int cursor = c % length;
 
     if (values.find(cursor) != values.end()) {
