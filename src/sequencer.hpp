@@ -10,7 +10,7 @@ class Sequencer
 
     public:
 
-        Sequencer(Jack jack, const char* str_url);
+        Sequencer(Jack jack, const char* osc_in_port, const char* osc_target_url);
         ~Sequencer();
 
         // Engine
@@ -18,6 +18,8 @@ class Sequencer
         int sample_rate;
         double period;
         double elapsed_samples;
+
+        static int jack_callback (jack_nframes_t nframes, void *arg);
 
         // Transport
 
@@ -30,6 +32,7 @@ class Sequencer
         void play_current();
 
         void play();
+        void pause();
         void stop();
         void trig();
 
@@ -46,8 +49,16 @@ class Sequencer
 
         // Osc
 
-        void send(const char* address, const char* type, double value);
+        lo_address osc_target;
+        const char* osc_port;
+        lo_server osc_server;
 
-        lo_address url;
+        void osc_init();
+        void osc_send(const char* address, const char* type, double value);
+
+        static int osc_play_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
+        static int osc_pause_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
+        static int osc_stop_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
+        static int osc_trig_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
 
 };

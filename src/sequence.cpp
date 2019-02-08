@@ -39,7 +39,7 @@ void Sequence::disable()
 
     if (enabled && note_on) {
         note_on = false;
-        sequencer->send(address, type, 0);
+        sequencer->osc_send(address, type, 0);
     }
 
     enabled = false;
@@ -60,11 +60,13 @@ void Sequence::toggle()
 void Sequence::play(int c)
 {
 
+    if (!enabled) return;
+    
     int cursor = c % length;
 
     if (values.find(cursor) != values.end()) {
 
-        sequencer->send(address, type, values[cursor]);
+        sequencer->osc_send(address, type, values[cursor]);
 
         if (note) {
             note_on = values[cursor] > 0;

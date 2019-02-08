@@ -3,14 +3,14 @@
 #include "jack.hpp"
 #include "sequencer.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
 
     Jack jack = Jack();
 
     jack.connect();
 
-    Sequencer sequencer = Sequencer(jack, "osc.udp://127.0.0.1:5555");
+    Sequencer sequencer = Sequencer(jack, argv[1], "osc.udp://127.0.0.1:5555");
 
     const char* address = "/test";
     const char* type = "f";
