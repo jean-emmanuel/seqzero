@@ -323,3 +323,40 @@ int Sequencer::osc_seqwrite_handler(const char *path, const char *types, lo_arg 
 	return 0;
 
 }
+
+void Sequencer::osc_feed() {
+
+    fprintf(stderr, "xx");
+    std::string json = "{";
+
+    json += "\"bpm\":" + std::to_string(bpm) + ",";
+    json += "\"cursor\":" + std::to_string(cursor) + ",";
+    json += "\"playing\":" + std::to_string(playing) + ",";
+
+    json += "\"sequences\":{";
+
+    for (auto& it1: sequence_map) {
+
+        Sequence seq = it1.second;
+
+        json += "\"" + seq.address + "\":{";
+
+        json += "\"enabled\":" + std::to_string(seq.enabled) + ",";
+        json += "\"note\":" + std::to_string(seq.note) + ",";
+        if (seq.note) json += "\"note_on\":" + std::to_string(seq.note_on) + ",";
+
+        json += "\"values\":{" ;
+
+        for (auto& it2: seq.values) {
+            json += "\"" + std::to_string(it2.first) + "\":" + std::to_string(it2.second) + ",";
+        }
+
+        json += "}},";
+
+    }
+
+    json += "}}";
+
+    fprintf(stderr, "%s", json.c_str());
+
+}

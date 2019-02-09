@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 
     const char* address2 = "/2";;
     sequencer.sequence_add(address2, type, values, length, enabled, is_note);
-
+    // sequencer.osc_feed();
 
     // sequencer.play();
 

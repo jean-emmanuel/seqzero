@@ -60,6 +60,8 @@ class Sequencer
         static int osc_seqctrl_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
         static int osc_seqwrite_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
 
+        void osc_feed();
+
         enum {
             SEQ_ENABLE = 1,
             SEQ_DISABLE,
