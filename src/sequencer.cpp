@@ -326,7 +326,6 @@ int Sequencer::osc_seqwrite_handler(const char *path, const char *types, lo_arg 
 
 void Sequencer::osc_feed() {
 
-    fprintf(stderr, "xx");
     std::string json = "{";
 
     json += "\"bpm\":" + std::to_string(bpm) + ",";
@@ -335,9 +334,9 @@ void Sequencer::osc_feed() {
 
     json += "\"sequences\":{";
 
-    for (auto& it1: sequence_map) {
+    for (auto it1 = sequence_map.cbegin(); it1 != sequence_map.cend();) {
 
-        Sequence seq = it1.second;
+        Sequence seq = it1->second;
 
         json += "\"" + seq.address + "\":{";
 
@@ -347,11 +346,16 @@ void Sequencer::osc_feed() {
 
         json += "\"values\":{" ;
 
-        for (auto& it2: seq.values) {
-            json += "\"" + std::to_string(it2.first) + "\":" + std::to_string(it2.second) + ",";
+        for (auto it2 = seq.values.cbegin(); it2 != seq.values.cend();) {
+            json += "\"" + std::to_string(it2->first) + "\":" + std::to_string(it2->second);
+            it2++;
+            if (it2 != seq.values.cend()) json += ",";
         }
 
-        json += "}},";
+        json += "}}";
+
+        it1++;
+        if (it1 != sequence_map.cend()) json += ",";
 
     }
 
