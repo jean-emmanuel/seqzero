@@ -62,9 +62,9 @@ class Sequencer
 
         enum {
             SEQ_ENABLE = 1,
-            SEQ_DISABLE = 2,
-            SEQ_TOGGLE = 3,
-            SEQ_REMOVE = 4
+            SEQ_DISABLE,
+            SEQ_TOGGLE,
+            SEQ_REMOVE
         };
 
         std::map<std::string, int> osc_sequence_commands = {

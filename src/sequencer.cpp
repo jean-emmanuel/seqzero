@@ -1,5 +1,6 @@
 #include <cstring>
 #include <jack/jack.h>
+#include <json.h>
 
 #include "sequencer.hpp"
 #include "sequence.hpp"
@@ -268,18 +269,52 @@ int Sequencer::osc_seqctrl_handler(const char *path, const char *types, lo_arg *
 
 int Sequencer::osc_seqwrite_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
 {
+
     Sequencer *sequencer = (Sequencer *) user_data;
 
 
     std::string address = &argv[0]->s;
-    std::string str_data = &argv[1]->s;
+    const char * json_str = &argv[1]->s;
 
     if (address.c_str()[0] !=  '/') return 0;
 
-    // json parse...
+    json_object * json = json_tokener_parse(json_str);
 
-    // sequencer.sequence_add()
+    if (!json) return 0;
 
+    json_object * walker;
+
+    bool is_note = false;
+    bool enabled = false;
+    int length = 0;
+    const char* osc_type = "f";
+    std::map<int, double> values;
+
+    if (json_object_object_get_ex(json, "note", &walker)) {
+        is_note = json_object_get_boolean(walker);
+    }
+
+    if (json_object_object_get_ex(json, "enabled", &walker)) {
+        enabled = json_object_get_boolean(walker);
+    }
+
+    if (json_object_object_get_ex(json, "length", &walker)) {
+        length = json_object_get_int(walker);
+    }
+
+    if (json_object_object_get_ex(json, "type", &walker)) {
+        osc_type = json_object_get_string(walker);
+    }
+
+    if (json_object_object_get_ex(json, "values", &walker)) {
+        json_object_object_foreach(walker, key, val) {
+            int k = atoi(key);
+            values[k] = json_object_get_double(val);
+        }
+    }
+
+
+    sequencer->sequence_add(address, osc_type, values, length, enabled, is_note);
 
 	return 0;
 }
