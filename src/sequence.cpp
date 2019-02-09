@@ -60,7 +60,7 @@ void Sequence::toggle()
 void Sequence::play(int c)
 {
 
-    if (!enabled) return;
+    if (!enabled || !length) return;
 
     int cursor = c % length;
 
