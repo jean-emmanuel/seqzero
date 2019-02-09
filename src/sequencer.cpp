@@ -178,9 +178,9 @@ void Sequencer::osc_init()
     lo_server_thread_add_method(osc_server, "/pause", NULL, Sequencer::osc_pause_handler, this);
     lo_server_thread_add_method(osc_server, "/stop", NULL, Sequencer::osc_stop_handler, this);
     lo_server_thread_add_method(osc_server, "/trig", NULL, Sequencer::osc_trig_handler, this);
-    lo_server_thread_add_method(osc_server, "/sequence", "ss", Sequencer::osc_seqctrl_handler, this);
-    lo_server_thread_add_method(osc_server, "/sequence/write", NULL, Sequencer::osc_seqwrite_handler, this);
 
+    lo_server_thread_add_method(osc_server, "/sequence", "ss", Sequencer::osc_seqctrl_handler, this);
+    lo_server_thread_add_method(osc_server, "/sequence", "sss", Sequencer::osc_seqwrite_handler, this);
 
     lo_server_thread_start(osc_server);
 
@@ -243,6 +243,7 @@ int Sequencer::osc_seqctrl_handler(const char *path, const char *types, lo_arg *
     if (!command) return 0;
 
     if (sequencer->sequence_map.find(address) != sequencer->sequence_map.end()) {
+
         sequencer->sequence_control(address, command);
 
     } else {
@@ -274,9 +275,12 @@ int Sequencer::osc_seqwrite_handler(const char *path, const char *types, lo_arg 
 
 
     std::string address = &argv[0]->s;
-    const char * json_str = &argv[1]->s;
+    std::string command_str = &argv[1]->s;
+    const char * json_str = &argv[2]->s;
 
-    if (address.c_str()[0] !=  '/') return 0;
+    int command = sequencer->osc_sequence_commands[command_str];
+
+    if (address.c_str()[0] !=  '/' || command != SEQ_WRITE) return 0;
 
     json_object * json = json_tokener_parse(json_str);
 
@@ -317,4 +321,5 @@ int Sequencer::osc_seqwrite_handler(const char *path, const char *types, lo_arg 
     sequencer->sequence_add(address, osc_type, values, length, enabled, is_note);
 
 	return 0;
+
 }

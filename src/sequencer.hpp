@@ -64,14 +64,16 @@ class Sequencer
             SEQ_ENABLE = 1,
             SEQ_DISABLE,
             SEQ_TOGGLE,
-            SEQ_REMOVE
+            SEQ_REMOVE,
+            SEQ_WRITE
         };
 
         std::map<std::string, int> osc_sequence_commands = {
             {"enable",  SEQ_ENABLE},
             {"disable", SEQ_DISABLE},
             {"toggle",  SEQ_TOGGLE},
-            {"remove",  SEQ_REMOVE}
+            {"remove",  SEQ_REMOVE},
+            {"write",   SEQ_WRITE}
         };
 
 };
