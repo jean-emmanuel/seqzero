@@ -180,6 +180,7 @@ void Sequencer::osc_init()
         exit(0);
     }
 
+    lo_server_thread_add_method(osc_server, "/bpm", NULL, Sequencer::osc_bpm_handler, this);
     lo_server_thread_add_method(osc_server, "/play", NULL, Sequencer::osc_play_handler, this);
     lo_server_thread_add_method(osc_server, "/pause", NULL, Sequencer::osc_pause_handler, this);
     lo_server_thread_add_method(osc_server, "/stop", NULL, Sequencer::osc_stop_handler, this);
@@ -203,6 +204,14 @@ void Sequencer::osc_send(std::string address, const char* type, double value)
         lo_send(osc_target, address.c_str(), type, value);
     }
 
+}
+
+int Sequencer::osc_bpm_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
+{
+    Sequencer *sequencer = (Sequencer *) user_data;
+    if (types[0] == 'i') sequencer->set_bpm(argv[0]->i);
+    if (types[0] == 'f') sequencer->set_bpm(argv[0]->f);
+	return 0;
 }
 
 int Sequencer::osc_play_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)

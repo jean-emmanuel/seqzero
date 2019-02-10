@@ -54,6 +54,7 @@ class Sequencer
         void osc_init();
         void osc_send(std::string address, const char* type, double value);
 
+        static int osc_bpm_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
         static int osc_play_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
         static int osc_pause_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
         static int osc_stop_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
