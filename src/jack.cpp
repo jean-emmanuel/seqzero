@@ -8,6 +8,7 @@ Jack::Jack()
 {
 
     client_name = "SeqZero";
+    connect();
 
 }
 
