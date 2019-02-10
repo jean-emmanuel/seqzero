@@ -324,13 +324,17 @@ int Sequencer::osc_seqwrite_handler(const char *path, const char *types, lo_arg 
 
 }
 
+std::string bool_to_str(bool b) {
+    return b ? "true" : "false";
+}
+
 void Sequencer::osc_feed() {
 
     std::string json = "{";
 
     json += "\"bpm\":" + std::to_string(bpm) + ",";
     json += "\"cursor\":" + std::to_string(cursor) + ",";
-    json += "\"playing\":" + std::to_string(playing) + ",";
+    json += "\"playing\":" + bool_to_str(playing) + ",";
 
     json += "\"sequences\":{";
 
@@ -340,9 +344,10 @@ void Sequencer::osc_feed() {
 
         json += "\"" + seq.address + "\":{";
 
-        json += "\"enabled\":" + std::to_string(seq.enabled) + ",";
-        json += "\"note\":" + std::to_string(seq.note) + ",";
-        if (seq.note) json += "\"note_on\":" + std::to_string(seq.note_on) + ",";
+        json += "\"enabled\":" + bool_to_str(seq.enabled) + ",";
+        json += "\"type\":\"" + (std::string)seq.type + "\",";
+        json += "\"note\":" + bool_to_str(seq.note) + ",";
+        if (seq.note) json += "\"note_on\":" + bool_to_str(seq.note_on) + ",";
 
         json += "\"values\":{" ;
 
