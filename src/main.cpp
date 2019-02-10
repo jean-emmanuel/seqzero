@@ -6,7 +6,6 @@
 
 #define DEFAULT_OSC_PORT "5244"
 #define DEFAULT_TARGET_URL "osc.udp://127.0.0.1:5245"
-#define DEFAULT_FEEDBACK_URL "osc.udp://127.0.0.1:5246"
 
 const char* optstring = "p:t:f:vh";
 
@@ -27,16 +26,15 @@ static void usage(char *argv0)
 	fprintf(stderr, "Options:\n");
     fprintf(stderr, "  -p <str> , --osc-port=<str>      udp inport number or unix socket path for OSC server (default: %s)\n", DEFAULT_OSC_PORT);
     fprintf(stderr, "  -t <str> , --target-url=<str>    osc.udp or osc.unix target url for sequences messages (default: %s)\n", DEFAULT_TARGET_URL);
-	fprintf(stderr, "  -f <str> , --feedback-url=<str>  osc.udp or osc.unix target url for sequencer feedback (default: %s)\n", DEFAULT_FEEDBACK_URL);
+	fprintf(stderr, "  -f <str> , --feedback-url=<str>  osc.udp or osc.unix target url for sequencer feedback\n");
 	fprintf(stderr, "  -h , --help                      this usage output\n");
 	fprintf(stderr, "  -v , --version                   show version only\n");
-
 }
 
 struct OptionInfo
 {
 	OptionInfo() :
-		port(DEFAULT_OSC_PORT), target(DEFAULT_TARGET_URL), feedback(DEFAULT_FEEDBACK_URL),
+		port(DEFAULT_OSC_PORT), target(DEFAULT_TARGET_URL), feedback(),
 		show_usage(0), show_version(0) {}
 
     const char* port;
@@ -109,7 +107,7 @@ int main(int argc, char* argv[])
 
     Jack jack = Jack();
 
-    Sequencer sequencer = Sequencer(jack, option_info.port, option_info.target);
+    Sequencer sequencer = Sequencer(jack, option_info.port, option_info.target, option_info.feedback);
 
     const char* address = "/1";
     const char* type = "f";

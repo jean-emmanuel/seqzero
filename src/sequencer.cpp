@@ -7,7 +7,7 @@
 #include "config.hpp"
 #include "jack.hpp"
 
-Sequencer::Sequencer(Jack jack, const char* osc_in_port, const char* osc_target_url)
+Sequencer::Sequencer(Jack jack, const char* osc_in_port, const char* osc_target_url, const char* osc_feedback_url)
 {
 
     // Engine
@@ -26,6 +26,7 @@ Sequencer::Sequencer(Jack jack, const char* osc_in_port, const char* osc_target_
 
     osc_port = osc_in_port;
     osc_target = lo_address_new_from_url(osc_target_url);
+    osc_feedback_target = lo_address_new_from_url(osc_feedback_url);
 
     osc_init();
 
@@ -35,6 +36,7 @@ Sequencer::~Sequencer()
 {
 
     lo_address_free(osc_target);
+    lo_address_free(osc_feedback_target);
 
 }
 
