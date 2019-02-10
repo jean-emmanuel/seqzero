@@ -37,6 +37,7 @@ Sequencer::~Sequencer()
 
     lo_address_free(osc_target);
     lo_address_free(osc_feedback_target);
+    lo_server_thread_free(osc_server);
 
 }
 
@@ -174,9 +175,7 @@ void osc_error(int num, const char *m, const char *path)
 void Sequencer::osc_init()
 {
 
-    int proto = sscanf(osc_port, "%*u%*c") == -1 ? LO_UDP : LO_UNIX;
-
-    osc_server = lo_server_thread_new_with_proto(osc_port, proto, osc_error);
+    osc_server = lo_server_thread_new(osc_port, osc_error);
 
     if (!osc_server) {
         exit(0);
