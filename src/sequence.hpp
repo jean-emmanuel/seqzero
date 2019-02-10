@@ -31,5 +31,6 @@ class Sequence
         void toggle();
 
         void play(int cursor);
+        void note_off();
 
 };

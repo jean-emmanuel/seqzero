@@ -37,10 +37,7 @@ void Sequence::enable()
 void Sequence::disable()
 {
 
-    if (enabled && note_on) {
-        note_on = false;
-        sequencer->osc_send(address, type, 0);
-    }
+    note_off();
 
     enabled = false;
 
@@ -73,5 +70,15 @@ void Sequence::play(int c)
         }
 
     }
+
+}
+
+void Sequence::note_off()
+{
+
+    if (!enabled || !note_on) return;
+
+    note_on = false;
+    sequencer->osc_send(address, type, 0);
 
 }

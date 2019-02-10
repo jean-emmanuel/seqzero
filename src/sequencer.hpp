@@ -30,6 +30,7 @@ class Sequencer
         void set_period(double period);
         void set_bpm(float bpm);
         void play_current();
+        void notes_off();
 
         void play();
         void pause();

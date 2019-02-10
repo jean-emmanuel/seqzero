@@ -93,6 +93,15 @@ void Sequencer::play_current()
 
 }
 
+void Sequencer::notes_off()
+{
+
+    for (auto& item: sequence_map) {
+        item.second.note_off();
+    }
+
+}
+
 
 void Sequencer::play() {
 
@@ -106,6 +115,7 @@ void Sequencer::play() {
 
 void Sequencer::pause() {
 
+    if (playing) notes_off();
     playing = false;
 
 }
@@ -120,12 +130,8 @@ void Sequencer::stop() {
 
 void Sequencer::trig() {
 
-    cursor = 0;
-    elapsed_samples = 0;
-
-    if (!playing) {
-        play();
-    }
+    stop();
+    play();
 
 }
 
