@@ -384,6 +384,6 @@ void Sequencer::osc_feed() {
 
     json += "}}";
 
-    fprintf(stderr, "%s", json.c_str());
+    if (osc_feedback_target) lo_send(osc_feedback_target, "/status", "s", json);
 
 }

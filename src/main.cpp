@@ -138,8 +138,6 @@ int main(int argc, char* argv[])
         sleep(1);
     }
 
-	fprintf(stderr, "%s\n", "xxxx");
 	delete sequencer;
-    // jack.disconnect();
 
 }
