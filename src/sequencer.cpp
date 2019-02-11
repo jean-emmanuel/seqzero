@@ -182,7 +182,7 @@ void Sequencer::osc_init()
     osc_server = lo_server_thread_new(osc_port, osc_error);
 
     if (!osc_server) {
-        exit(0);
+        exit(1);
     }
 
     lo_server_thread_add_method(osc_server, "/bpm", NULL, Sequencer::osc_bpm_handler, this);

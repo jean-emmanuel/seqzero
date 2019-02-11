@@ -140,4 +140,6 @@ int main(int argc, char* argv[])
 
 	delete sequencer;
 
+    return 0;
+
 }
