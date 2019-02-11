@@ -37,3 +37,50 @@ Requires: `liblo`, `libjson-c`, `libstdc++`, `libjack`
 `apt install libstdc++-8-dev liblo-dev libjson-c-dev libjack-jackd2-dev`
 
 Run `./make` to build
+
+**Usage**
+
+```
+Usage: ./seqzero2 [options...]
+Options:
+  -p <str> , --osc-port=<str>      udp inport number or unix socket path for OSC server (default: 5244)
+  -t <str> , --target-url=<str>    osc.udp or osc.unix target url for sequences messages (default: osc.udp://127.0.0.1:5245)
+  -f <str> , --feedback-url=<str>  osc.udp or osc.unix target url for sequencer feedback
+  -h , --help                      this usage output
+  -v , --version                   show version only
+```
+
+**OSC API**
+
+Commands:
+
+- `/bpm <num>`
+- `/play`
+- `/pause`
+- `/stop`
+- `/trig`
+
+
+- `/sequence /seq/address enable`
+- `/sequence /seq/address disable`
+- `/sequence /seq/address toggle`
+- `/sequence /seq/address remove`
+- `/sequence /seq/address write <str>`, where `<str` is a json set of properties
+  - `"enabled": <bool>`
+  - `"type": <str>`: osc message value type (`i`, `f` or `d`)
+  - `"note": <bool>`: if `true`, `0` is sent when the sequence is disabled
+  - `"values": <str>`: `{"<int>":"<num>"}` json set (`<int>` = time in ticks, `<num>` = osc message value)
+
+Feedback:
+
+- `/status/sequencer <str>`: where `<str>` is a json set of properties:
+  - `"bpm": <num>`
+  - `"cursor": <int>`
+  - `"playing": <bool>`
+
+- `/status/sequence <str>`: where `<str>` is a json set of properties:
+  - `"address": <str>`
+  - `"enabled": <bool>`
+  - `"note": <bool>`
+  - `"values": <str>`
+  - `"removed": <bool>`
