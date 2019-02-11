@@ -68,20 +68,20 @@ int Sequencer::jack_callback (jack_nframes_t nframes, void *arg)
 
     Sequencer *sequencer = (Sequencer *) arg;
 
-	jack_nframes_t i;
+    jack_nframes_t i;
 
     if (!sequencer->playing) return 0;
 
-	for(i=0; i < nframes; i++)
-	{
+    for(i=0; i < nframes; i++)
+    {
         sequencer->elapsed_samples += 1;
         if (sequencer->elapsed_samples >= sequencer->period) {
             sequencer->elapsed_samples = sequencer->elapsed_samples - sequencer->period;
             sequencer->play_current();
         }
-	}
+    }
 
-	return 0;
+    return 0;
 
 }
 
@@ -212,35 +212,35 @@ int Sequencer::osc_bpm_handler(const char *path, const char *types, lo_arg **arg
     Sequencer *sequencer = (Sequencer *) user_data;
     if (types[0] == 'i') sequencer->set_bpm(argv[0]->i);
     if (types[0] == 'f') sequencer->set_bpm(argv[0]->f);
-	return 0;
+    return 0;
 }
 
 int Sequencer::osc_play_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
 {
     Sequencer *sequencer = (Sequencer *) user_data;
     sequencer->play();
-	return 0;
+    return 0;
 }
 
 int Sequencer::osc_pause_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
 {
     Sequencer *sequencer = (Sequencer *) user_data;
     sequencer->pause();
-	return 0;
+    return 0;
 }
 
 int Sequencer::osc_stop_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
 {
     Sequencer *sequencer = (Sequencer *) user_data;
     sequencer->stop();
-	return 0;
+    return 0;
 }
 
 int Sequencer::osc_trig_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
 {
     Sequencer *sequencer = (Sequencer *) user_data;
     sequencer->trig();
-	return 0;
+    return 0;
 }
 
 
@@ -280,7 +280,7 @@ int Sequencer::osc_seqctrl_handler(const char *path, const char *types, lo_arg *
     }
 
 
-	return 0;
+    return 0;
 
 }
 
@@ -336,7 +336,7 @@ int Sequencer::osc_seqwrite_handler(const char *path, const char *types, lo_arg 
 
     sequencer->sequence_add(address, osc_type, values, length, enabled, is_note);
 
-	return 0;
+    return 0;
 
 }
 
