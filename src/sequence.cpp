@@ -105,6 +105,7 @@ void Sequence::feed_status(bool deleted)
         json += "\"enabled\":" + bool_to_str(enabled) + ",";
         json += "\"type\":\"" + (std::string)type + "\",";
         json += "\"note\":" + bool_to_str(note) + ",";
+        json += "\"length\":" + std::to_string(length) + ",";
         // if (note) json += "\"note_on\":" + bool_to_str(note_on) + ",";
 
         json += "\"values\":{" ;
