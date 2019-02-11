@@ -14,7 +14,7 @@ Sequencer::Sequencer(const char* osc_in_port, const char* osc_target_url, const 
 
     elapsed_samples = 0;
 
-    Jack * jack = new Jack();
+    jack = new Jack();
     sample_rate = jack_get_sample_rate(jack->jack_client);
     jack->set_callback(jack_callback, this);
 
@@ -40,6 +40,7 @@ Sequencer::~Sequencer()
     lo_address_free(osc_target);
     lo_address_free(osc_feedback_target);
     lo_server_thread_free(osc_server);
+    delete jack;
 
 }
 

@@ -15,6 +15,8 @@ Jack::Jack()
 Jack::~Jack()
 {
 
+    disconnect();
+
 }
 
 void Jack::connect()

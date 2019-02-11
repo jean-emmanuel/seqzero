@@ -19,6 +19,7 @@ class Sequencer
         double period;
         double elapsed_samples;
 
+        Jack * jack;
         static int jack_callback (jack_nframes_t nframes, void *arg);
 
         // Transport
