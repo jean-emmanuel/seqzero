@@ -28,3 +28,12 @@ Ideas
   - communicates with the engine using osc
   - handles all the sequence grouping logic
   - 1 sequence group = pianoroll (1 sequence for each non-empty note) + controls (1 sequence per line); grouped sequences would share the same address prefix
+
+
+**Build**
+
+Requires: `liblo`, `libjson-c`, `libstdc++`, `libjack`
+
+`apt install libstdc++-8-dev liblo-dev libjson-c-dev libjack-jackd2-dev`
+
+Run `./make` to build
