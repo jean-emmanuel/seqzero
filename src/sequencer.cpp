@@ -91,7 +91,7 @@ void Sequencer::play_current()
 {
 
     for (auto& item: sequence_map) {
-        item.second.play(cursor);
+        item.second->play(cursor);
     }
 
     cursor += 1;
@@ -102,7 +102,7 @@ void Sequencer::notes_off()
 {
 
     for (auto& item: sequence_map) {
-        item.second.note_off();
+        item.second->note_off();
     }
 
 }
@@ -144,7 +144,7 @@ void Sequencer::sequence_add(std::string address, const char* type,
                     std::map<int, double> values, int length, bool enabled, bool is_note)
 {
 
-    sequence_map[address] = Sequence(this, address, type, values, length, enabled, is_note);
+    sequence_map[address] = new Sequence(this, address, type, values, length, enabled, is_note);
 
 }
 
@@ -153,16 +153,17 @@ void Sequencer::sequence_control(std::string address, int command)
 
     switch(command) {
         case SEQ_ENABLE:
-            sequence_map[address].enable();
+            sequence_map[address]->enable();
             break;
         case SEQ_DISABLE:
-            sequence_map[address].disable();
+            sequence_map[address]->disable();
             break;
         case SEQ_TOGGLE:
-            sequence_map[address].toggle();
+            sequence_map[address]->toggle();
             break;
         case SEQ_REMOVE:
-            std::map<std::string, Sequence>::iterator it = sequence_map.find(address);
+            std::map<std::string, Sequence *>::iterator it = sequence_map.find(address);
+            delete it->second;
             sequence_map.erase(it);
             break;
     }
@@ -268,7 +269,7 @@ int Sequencer::osc_seqctrl_handler(const char *path, const char *types, lo_arg *
 
         for (auto item = sequencer->sequence_map.cbegin(); item != sequencer->sequence_map.cend();) {
 
-            std::string item_address = item->second.address;
+            std::string item_address = item->second->address;
             item++;
 
             if (lo_pattern_match(item_address.c_str(), address.c_str())) {
@@ -358,21 +359,21 @@ void Sequencer::osc_feed() {
 
     for (auto it1 = sequence_map.cbegin(); it1 != sequence_map.cend();) {
 
-        Sequence seq = it1->second;
+        Sequence * seq = it1->second;
 
-        json += "\"" + seq.address + "\":{";
+        json += "\"" + seq->address + "\":{";
 
-        json += "\"enabled\":" + bool_to_str(seq.enabled) + ",";
-        json += "\"type\":\"" + (std::string)seq.type + "\",";
-        json += "\"note\":" + bool_to_str(seq.note) + ",";
-        if (seq.note) json += "\"note_on\":" + bool_to_str(seq.note_on) + ",";
+        json += "\"enabled\":" + bool_to_str(seq->enabled) + ",";
+        json += "\"type\":\"" + (std::string)seq->type + "\",";
+        json += "\"note\":" + bool_to_str(seq->note) + ",";
+        if (seq->note) json += "\"note_on\":" + bool_to_str(seq->note_on) + ",";
 
         json += "\"values\":{" ;
 
-        for (auto it2 = seq.values.cbegin(); it2 != seq.values.cend();) {
+        for (auto it2 = seq->values.cbegin(); it2 != seq->values.cend();) {
             json += "\"" + std::to_string(it2->first) + "\":" + std::to_string(it2->second);
             it2++;
-            if (it2 != seq.values.cend()) json += ",";
+            if (it2 != seq->values.cend()) json += ",";
         }
 
         json += "}}";

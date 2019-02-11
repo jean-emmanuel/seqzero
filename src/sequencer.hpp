@@ -40,7 +40,7 @@ class Sequencer
 
         // Sequences
 
-        std::map<std::string, Sequence> sequence_map;
+        std::map<std::string, Sequence *> sequence_map;
 
         void sequence_add(std::string address, const char* type, std::map<int, double> values, int length, bool enabled, bool is_note);
         void sequence_control(std::string address, int command);
