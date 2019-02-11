@@ -33,4 +33,6 @@ class Sequence
         void play(int cursor);
         void note_off();
 
+        void feed_status(bool deleted);
+
 };

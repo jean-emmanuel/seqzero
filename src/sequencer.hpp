@@ -55,6 +55,7 @@ class Sequencer
 
         void osc_init();
         void osc_send(std::string address, const char* type, double value);
+        void osc_send_feed(std::string address, std::string json);
 
         static int osc_bpm_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
         static int osc_play_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
@@ -64,7 +65,7 @@ class Sequencer
         static int osc_seqctrl_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
         static int osc_seqwrite_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
 
-        void osc_feed();
+        void feed_status();
 
         enum {
             SEQ_ENABLE = 1,

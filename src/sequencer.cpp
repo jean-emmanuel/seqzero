@@ -4,6 +4,7 @@
 
 #include "sequencer.hpp"
 #include "sequence.hpp"
+#include "utils.hpp"
 #include "config.hpp"
 #include "jack.hpp"
 
@@ -37,6 +38,7 @@ Sequencer::Sequencer(const char* osc_in_port, const char* osc_target_url, const 
 Sequencer::~Sequencer()
 {
 
+    stop();
     lo_address_free(osc_target);
     lo_address_free(osc_feedback_target);
     lo_server_thread_free(osc_server);
@@ -95,6 +97,8 @@ void Sequencer::play_current()
         item.second->play(cursor);
     }
 
+    feed_status();
+
     cursor += 1;
 
 }
@@ -115,6 +119,7 @@ void Sequencer::play() {
         trig();
     } else {
         playing = true;
+        feed_status();
     }
 
 }
@@ -123,6 +128,7 @@ void Sequencer::pause() {
 
     if (playing) notes_off();
     playing = false;
+    feed_status();
 
 }
 
@@ -207,6 +213,17 @@ void Sequencer::osc_send(std::string address, const char* type, double value)
         lo_send(osc_target, address.c_str(), type, ivalue);
     } else {
         lo_send(osc_target, address.c_str(), type, value);
+    }
+
+}
+
+void Sequencer::osc_send_feed(std::string address, std::string json)
+{
+
+    if (osc_feedback_target) {
+
+        lo_send(osc_feedback_target, address.c_str(), "s", json.c_str());
+
     }
 
 }
@@ -344,48 +361,16 @@ int Sequencer::osc_seqwrite_handler(const char *path, const char *types, lo_arg 
 
 }
 
-std::string bool_to_str(bool b) {
-    return b ? "true" : "false";
-}
-
-void Sequencer::osc_feed() {
+void Sequencer::feed_status() {
 
     std::string json = "{";
 
     json += "\"bpm\":" + std::to_string(bpm) + ",";
     json += "\"cursor\":" + std::to_string(cursor) + ",";
-    json += "\"playing\":" + bool_to_str(playing) + ",";
+    json += "\"playing\":" + bool_to_str(playing);
 
-    json += "\"sequences\":{";
+    json += "}";
 
-    for (auto it1 = sequence_map.cbegin(); it1 != sequence_map.cend();) {
-
-        Sequence * seq = it1->second;
-
-        json += "\"" + seq->address + "\":{";
-
-        json += "\"enabled\":" + bool_to_str(seq->enabled) + ",";
-        json += "\"type\":\"" + (std::string)seq->type + "\",";
-        json += "\"note\":" + bool_to_str(seq->note) + ",";
-        if (seq->note) json += "\"note_on\":" + bool_to_str(seq->note_on) + ",";
-
-        json += "\"values\":{" ;
-
-        for (auto it2 = seq->values.cbegin(); it2 != seq->values.cend();) {
-            json += "\"" + std::to_string(it2->first) + "\":" + std::to_string(it2->second);
-            it2++;
-            if (it2 != seq->values.cend()) json += ",";
-        }
-
-        json += "}}";
-
-        it1++;
-        if (it1 != sequence_map.cend()) json += ",";
-
-    }
-
-    json += "}}";
-
-    if (osc_feedback_target) lo_send(osc_feedback_target, "/status", "s", json.c_str());
+    osc_send_feed("/status/sequencer", json);
 
 }
