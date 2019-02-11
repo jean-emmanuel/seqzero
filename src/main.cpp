@@ -102,7 +102,7 @@ bool run = true;
 
 void sighandler(int sig)
 {
-	run = false;
+    run = false;
 }
 
 int main(int argc, char* argv[])
@@ -129,15 +129,15 @@ int main(int argc, char* argv[])
 
     // sequencer.play();
 
-	signal(SIGABRT, &sighandler);
-	signal(SIGTERM, &sighandler);
-	signal(SIGINT, &sighandler);
+    signal(SIGABRT, &sighandler);
+    signal(SIGTERM, &sighandler);
+    signal(SIGINT, &sighandler);
 
     while (run) {
         sleep(1);
     }
 
-	delete sequencer;
+    delete sequencer;
 
     return 0;
 
