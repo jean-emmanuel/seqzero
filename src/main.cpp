@@ -114,21 +114,6 @@ int main(int argc, char* argv[])
 
     Sequencer * sequencer = new Sequencer(option_info.port, option_info.target, option_info.feedback);
 
-    const char* address = "/1";
-    const char* type = "f";
-    std::map<int, double> values;
-    bool enabled = true;
-    bool is_note = false;
-    int length = 192;
-    values[0] = 1;
-    values[91] = 2;
-    sequencer->sequence_add(address, type, values, length, enabled, is_note);
-
-    const char* address2 = "/2";;
-    sequencer->sequence_add(address2, type, values, length, enabled, is_note);
-
-    // sequencer.play();
-
     signal(SIGABRT, &sighandler);
     signal(SIGTERM, &sighandler);
     signal(SIGINT, &sighandler);
