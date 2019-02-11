@@ -7,14 +7,16 @@
 #include "config.hpp"
 #include "jack.hpp"
 
-Sequencer::Sequencer(Jack jack, const char* osc_in_port, const char* osc_target_url, const char* osc_feedback_url)
+Sequencer::Sequencer(const char* osc_in_port, const char* osc_target_url, const char* osc_feedback_url)
 {
 
     // Engine
 
     elapsed_samples = 0;
-    sample_rate = jack_get_sample_rate(jack.jack_client);
-    jack.set_callback(jack_callback, this);
+
+    Jack * jack = new Jack();
+    sample_rate = jack_get_sample_rate(jack->jack_client);
+    jack->set_callback(jack_callback, this);
 
     // Transport
 

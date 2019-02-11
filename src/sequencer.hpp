@@ -10,7 +10,7 @@ class Sequencer
 
     public:
 
-        Sequencer(Jack jack, const char* osc_in_port, const char* osc_target_url, const char* osc_feedback_url);
+        Sequencer(const char* osc_in_port, const char* osc_target_url, const char* osc_feedback_url);
         ~Sequencer();
 
         // Engine

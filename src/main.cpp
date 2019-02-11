@@ -112,10 +112,7 @@ int main(int argc, char* argv[])
 
     parse_options (argc, argv, option_info);
 
-    Jack jack = Jack();
-
-	Sequencer * sequencer;
-    sequencer = new Sequencer(jack, option_info.port, option_info.target, option_info.feedback);
+    Sequencer * sequencer = new Sequencer(option_info.port, option_info.target, option_info.feedback);
 
     const char* address = "/1";
     const char* type = "f";
