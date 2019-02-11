@@ -1,3 +1,4 @@
+#include <signal.h>
 #include <unistd.h>
 #include <getopt.h>
 
@@ -97,6 +98,12 @@ static void parse_options (int argc, char **argv, OptionInfo & option_info)
 }
 
 
+bool run = true;
+
+void sighandler(int sig)
+{
+	run = false;
+}
 
 int main(int argc, char* argv[])
 {
@@ -107,7 +114,8 @@ int main(int argc, char* argv[])
 
     Jack jack = Jack();
 
-    Sequencer sequencer = Sequencer(jack, option_info.port, option_info.target, option_info.feedback);
+	Sequencer * sequencer;
+    sequencer = new Sequencer(jack, option_info.port, option_info.target, option_info.feedback);
 
     const char* address = "/1";
     const char* type = "f";
@@ -117,18 +125,24 @@ int main(int argc, char* argv[])
     int length = 192;
     values[0] = 1;
     values[91] = 2;
-    sequencer.sequence_add(address, type, values, length, enabled, is_note);
+    sequencer->sequence_add(address, type, values, length, enabled, is_note);
 
     const char* address2 = "/2";;
-    sequencer.sequence_add(address2, type, values, length, enabled, is_note);
-    sequencer.osc_feed();
+    sequencer->sequence_add(address2, type, values, length, enabled, is_note);
+    sequencer->osc_feed();
 
     // sequencer.play();
 
-    while (1) {
+	signal(SIGABRT, &sighandler);
+	signal(SIGTERM, &sighandler);
+	signal(SIGINT, &sighandler);
+
+    while (run) {
         sleep(1);
     }
 
+	fprintf(stderr, "%s\n", "xxxx");
+	delete sequencer;
     // jack.disconnect();
 
 }
