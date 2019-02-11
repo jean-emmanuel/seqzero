@@ -8,13 +8,14 @@
 #define DEFAULT_OSC_PORT "5244"
 #define DEFAULT_TARGET_URL "osc.udp://127.0.0.1:5245"
 
-const char* optstring = "p:t:f:vh";
+const char* optstring = "p:t:f:s:vh";
 
 struct option long_options[] = {
     { "help", 0, 0, 'h' },
     { "osc-port", 1, 0, 'p' },
     { "target", 1, 0, 't' },
     { "feedback", 1, 0, 'f' },
+    { "stress-test", 0, 0, 's' },
     { "version", 0, 0, 'v' },
     { 0, 0, 0, 0 }
 };
@@ -36,7 +37,7 @@ struct OptionInfo
 {
     OptionInfo() :
         port(DEFAULT_OSC_PORT), target(DEFAULT_TARGET_URL), feedback(),
-        show_usage(0), show_version(0) {}
+        show_usage(0), show_version(0), stress_test(0) {}
 
     const char* port;
     const char* target;
@@ -44,6 +45,7 @@ struct OptionInfo
 
     int show_usage;
     int show_version;
+    int stress_test;
 };
 
 static void parse_options (int argc, char **argv, OptionInfo & option_info)
@@ -74,6 +76,9 @@ static void parse_options (int argc, char **argv, OptionInfo & option_info)
             break;
         case 'f':
             option_info.feedback = optarg;
+            break;
+        case 's':
+            option_info.stress_test++;
             break;
         default:
             fprintf (stderr, "argument error: %d\n", c);
@@ -113,6 +118,26 @@ int main(int argc, char* argv[])
     parse_options (argc, argv, option_info);
 
     Sequencer * sequencer = new Sequencer(option_info.port, option_info.target, option_info.feedback);
+
+    if (option_info.stress_test) {
+
+        int i;
+        for (i=0; i<1000; i++) {
+            std::string address = "/seq/" + std::to_string(i);
+            const char* type = "f";
+            std::map<int, double> values;
+            bool enabled = true;
+            bool is_note = false;
+            int length = 192;
+            int x = i % 91;
+            values[x] = 1;
+            values[x+91] = 2;
+            sequencer->sequence_add(address.c_str(), type, values, length, enabled, is_note);
+        }
+
+        sequencer->play();
+
+    }
 
     signal(SIGABRT, &sighandler);
     signal(SIGTERM, &sighandler);
