@@ -57,30 +57,41 @@ class Sequencer
         void osc_send(std::string address, const char* type, double value);
         void osc_send_feed(std::string address, std::string json);
 
-        static int osc_bpm_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
-        static int osc_play_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
-        static int osc_pause_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
-        static int osc_stop_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
-        static int osc_trig_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
+        static int osc_ctrl_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
         static int osc_seqctrl_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
         static int osc_seqwrite_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
 
         void feed_status();
 
         enum {
-            SEQ_ENABLE = 1,
-            SEQ_DISABLE,
-            SEQ_TOGGLE,
-            SEQ_REMOVE,
-            SEQ_WRITE
+            SEQUENCER_ZERO = 0,
+            SEQUENCER_CURSOR,
+            SEQUENCER_BPM,
+            SEQUENCER_PLAY,
+            SEQUENCER_PAUSE,
+            SEQUENCER_STOP,
+            SEQUENCER_TRIG,
+
+            SEQUENCE_ENABLE,
+            SEQUENCE_DISABLE,
+            SEQUENCE_TOGGLE,
+            SEQUENCE_REMOVE,
+            SEQUENCE_WRITE
         };
 
-        std::map<std::string, int> osc_sequence_commands = {
-            {"enable",  SEQ_ENABLE},
-            {"disable", SEQ_DISABLE},
-            {"toggle",  SEQ_TOGGLE},
-            {"remove",  SEQ_REMOVE},
-            {"write",   SEQ_WRITE}
+        std::map<std::string, int> osc_commands = {
+            {"bpm",     SEQUENCER_BPM},
+            {"cursor",  SEQUENCER_CURSOR},
+            {"play",    SEQUENCER_PLAY},
+            {"pause",   SEQUENCER_PAUSE},
+            {"stop",    SEQUENCER_STOP},
+            {"trig",    SEQUENCER_TRIG},
+
+            {"enable",  SEQUENCE_ENABLE},
+            {"disable", SEQUENCE_DISABLE},
+            {"toggle",  SEQUENCE_TOGGLE},
+            {"remove",  SEQUENCE_REMOVE},
+            {"write",   SEQUENCE_WRITE}
         };
 
 };

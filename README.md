@@ -52,25 +52,35 @@ Options:
 
 **OSC API**
 
-Commands:
+Transport commands:
 
-- `/bpm <num>`
-- `/play`
-- `/pause`
-- `/stop`
-- `/trig`
+- `/sequencer <command>`, where `<command>` can be:
+  - `bpm <num>`
+  - `cursor <int>`
+  - `play`
+  - `pause`
+  - `stop`
+  - `trig`
 
 
-- `/sequence /seq/address enable`
-- `/sequence /seq/address disable`
-- `/sequence /seq/address toggle`
-- `/sequence /seq/address remove`
-- `/sequence /seq/address write <str>`, where `<str` is a json set of properties
+Sequences commands:
+
+- `/sequence <address> <command>`, where `<address>` is a sequence's address or glob-pattern and `<command>`:
+  - `enable`
+  - `disable`
+  - `toggle`
+  - `remove`
+
+Sequence writing:
+
+- `/sequence <address> write <str>`, where `<str` is a json set of properties
   - `"enabled": <bool>`
-  - `"type": <str>`: osc message value type (`i`, `f` or `d`)
+  - `"type": "<str>"`: osc message value type (`i`, `f` or `d`)
   - `"note": <bool>`: if `true`, `0` is sent when the sequence is disabled
   - `"length": <int>`: length in ticks
-  - `"values": <str>`: `{"<int>":"<num>"}` json set (`<int>` = time in ticks, `<num>` = osc message value)
+  - `"values": "<str>"`: `{"<int>":"<num>", ...}` json set (`<int>` = time in ticks, `<num>` = osc message value)
+
+Note: glob-patter is not supported here
 
 Feedback:
 
@@ -80,9 +90,9 @@ Feedback:
   - `"playing": <bool>`
 
 - `/status/sequence <str>`: where `<str>` is a json set of properties:
-  - `"address": <str>`
+  - `"address": "<str>"`
   - `"enabled": <bool>`
   - `"note": <bool>`
-  - `"values": <str>`
+  - `"values": {"<int>":"<num>", ...}`
   - `"length": <int>`
   - `"removed": <bool>`

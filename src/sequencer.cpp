@@ -159,16 +159,16 @@ void Sequencer::sequence_control(std::string address, int command)
 {
 
     switch(command) {
-        case SEQ_ENABLE:
+        case SEQUENCE_ENABLE:
             sequence_map[address]->enable();
             break;
-        case SEQ_DISABLE:
+        case SEQUENCE_DISABLE:
             sequence_map[address]->disable();
             break;
-        case SEQ_TOGGLE:
+        case SEQUENCE_TOGGLE:
             sequence_map[address]->toggle();
             break;
-        case SEQ_REMOVE:
+        case SEQUENCE_REMOVE:
             std::map<std::string, Sequence *>::iterator it = sequence_map.find(address);
             delete it->second;
             sequence_map.erase(it);
@@ -191,11 +191,7 @@ void Sequencer::osc_init()
         exit(1);
     }
 
-    lo_server_thread_add_method(osc_server, "/bpm", NULL, Sequencer::osc_bpm_handler, this);
-    lo_server_thread_add_method(osc_server, "/play", NULL, Sequencer::osc_play_handler, this);
-    lo_server_thread_add_method(osc_server, "/pause", NULL, Sequencer::osc_pause_handler, this);
-    lo_server_thread_add_method(osc_server, "/stop", NULL, Sequencer::osc_stop_handler, this);
-    lo_server_thread_add_method(osc_server, "/trig", NULL, Sequencer::osc_trig_handler, this);
+    lo_server_thread_add_method(osc_server, "/sequencer", NULL, Sequencer::osc_ctrl_handler, this);
 
     lo_server_thread_add_method(osc_server, "/sequence", "ss", Sequencer::osc_seqctrl_handler, this);
     lo_server_thread_add_method(osc_server, "/sequence", "sss", Sequencer::osc_seqwrite_handler, this);
@@ -228,42 +224,44 @@ void Sequencer::osc_send_feed(std::string address, std::string json)
 
 }
 
-int Sequencer::osc_bpm_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
+int Sequencer::osc_ctrl_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
 {
-    Sequencer *sequencer = (Sequencer *) user_data;
-    if (types[0] == 'i') sequencer->set_bpm(argv[0]->i);
-    if (types[0] == 'f') sequencer->set_bpm(argv[0]->f);
-    return 0;
-}
 
-int Sequencer::osc_play_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
-{
     Sequencer *sequencer = (Sequencer *) user_data;
-    sequencer->play();
-    return 0;
-}
 
-int Sequencer::osc_pause_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
-{
-    Sequencer *sequencer = (Sequencer *) user_data;
-    sequencer->pause();
-    return 0;
-}
+    std::string command_str = &argv[0]->s;
 
-int Sequencer::osc_stop_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
-{
-    Sequencer *sequencer = (Sequencer *) user_data;
-    sequencer->stop();
-    return 0;
-}
+    int command = sequencer->osc_commands[command_str];
 
-int Sequencer::osc_trig_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
-{
-    Sequencer *sequencer = (Sequencer *) user_data;
-    sequencer->trig();
-    return 0;
-}
+    switch(command) {
+        case SEQUENCER_PLAY:
+            sequencer->play();
+            break;
+        case SEQUENCER_PAUSE:
+            sequencer->pause();
+            break;
+        case SEQUENCER_STOP:
+            sequencer->stop();
+            break;
+        case SEQUENCER_TRIG:
+            sequencer->trig();
+            break;
+        case SEQUENCER_BPM:
+            if (argc > 1) {
+                if (types[1] == 'i') sequencer->set_bpm(argv[1]->i);
+                if (types[1] == 'f') sequencer->set_bpm(argv[1]->f);
+            }
+            break;
+        case SEQUENCER_CURSOR:
+            if (argc > 1 && types[1] == 'i') {
+                sequencer->cursor = argv[1]->i;
+            }
+            break;
+    }
 
+    return 0;
+
+}
 
 int Sequencer::osc_seqctrl_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
 {
@@ -275,7 +273,7 @@ int Sequencer::osc_seqctrl_handler(const char *path, const char *types, lo_arg *
 
     if (address.c_str()[0] !=  '/') return 0;
 
-    int command = sequencer->osc_sequence_commands[command_str];
+    int command = sequencer->osc_commands[command_str];
 
     if (!command) return 0;
 
@@ -315,9 +313,9 @@ int Sequencer::osc_seqwrite_handler(const char *path, const char *types, lo_arg 
     std::string command_str = &argv[1]->s;
     const char * json_str = &argv[2]->s;
 
-    int command = sequencer->osc_sequence_commands[command_str];
+    int command = sequencer->osc_commands[command_str];
 
-    if (address.c_str()[0] !=  '/' || command != SEQ_WRITE) return 0;
+    if (address.c_str()[0] !=  '/' || command != SEQUENCE_WRITE) return 0;
 
     json_object * json = json_tokener_parse(json_str);
 
