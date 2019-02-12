@@ -78,7 +78,7 @@ Sequence writing:
   - `"type": "<str>"`: osc message value type (`i`, `f` or `d`)
   - `"note": <bool>`: if `true`, `0` is sent when the sequence is disabled
   - `"length": <int>`: length in ticks
-  - `"values": "<str>"`: `{"<int>":"<num>", ...}` json set (`<int>` = time in ticks, `<num>` = osc message value)
+  - `"values": "<str>"`: `{"<int>": <num>, ...}` json set (`<int>` = time in ticks, `<num>` = osc message value)
 
 Note: glob-patter is not supported here
 
@@ -93,6 +93,6 @@ Feedback:
   - `"address": "<str>"`
   - `"enabled": <bool>`
   - `"note": <bool>`
-  - `"values": {"<int>":"<num>", ...}`
+  - `"values": {"<int>": <num>, ...}`
   - `"length": <int>`
   - `"removed": <bool>`
