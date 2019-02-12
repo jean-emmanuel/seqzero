@@ -1,4 +1,3 @@
-#include "utils.hpp"
 #include "sequence.hpp"
 #include "sequencer.hpp"
 
@@ -102,11 +101,11 @@ void Sequence::feed_status(bool deleted)
 
     } else {
 
-        json += "\"enabled\":" + bool_to_str(enabled) + ",";
+        json += "\"enabled\":" + std::to_string(enabled) + ",";
         json += "\"type\":\"" + (std::string)type + "\",";
-        json += "\"note\":" + bool_to_str(note) + ",";
+        json += "\"note\":" + std::to_string(note) + ",";
         json += "\"length\":" + std::to_string(length) + ",";
-        // if (note) json += "\"note_on\":" + bool_to_str(note_on) + ",";
+        // if (note) json += "\"note_on\":" + std::to_string(note_on) + ",";
 
         json += "\"values\":{" ;
 

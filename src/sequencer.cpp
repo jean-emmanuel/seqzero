@@ -4,7 +4,6 @@
 
 #include "sequencer.hpp"
 #include "sequence.hpp"
-#include "utils.hpp"
 #include "config.hpp"
 #include "jack.hpp"
 
@@ -365,7 +364,7 @@ void Sequencer::feed_status() {
 
     json += "\"bpm\":" + std::to_string(bpm) + ",";
     json += "\"cursor\":" + std::to_string(cursor) + ",";
-    json += "\"playing\":" + bool_to_str(playing);
+    json += "\"playing\":" + std::to_string(playing);
 
     json += "}";
 
