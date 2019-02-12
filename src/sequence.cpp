@@ -9,7 +9,12 @@ Sequence::Sequence(Sequencer *seq, std::string osc_address, const char* osc_type
     sequencer = seq;
 
     address = osc_address;
+
     type = osc_type;
+
+    if (type[0] !=  'i' && type[0] !=  'f' && type[0] !=  'd') {
+        type = "i";
+    }
 
     enabled = state;
     values = v;

@@ -203,7 +203,7 @@ void Sequencer::osc_init()
 void Sequencer::osc_send(std::string address, const char* type, double value)
 {
 
-    if (strcmp(type, "i") == 0) {
+    if (type[0] == 'i') {
         int ivalue = value;
         lo_send(osc_target, address.c_str(), type, ivalue);
     } else {
