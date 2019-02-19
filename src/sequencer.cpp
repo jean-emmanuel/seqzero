@@ -86,9 +86,7 @@ void Sequencer::process()
         int i;
 
         for (i = 0; i < ticks; i++) {
-
             play_current();
-
         }
 
         elapsed_time += ticks * period;
@@ -263,6 +261,13 @@ int Sequencer::osc_ctrl_handler(const char *path, const char *types, lo_arg **ar
                 sequencer->cursor = argv[1]->i;
             }
             break;
+        case SEQUENCER_STATUS:
+            sequencer->feed_status();
+            for (auto& item: sequencer->sequence_map) {
+                item.second->feed_status(false);
+            }
+            break;
+
     }
 
     return 0;

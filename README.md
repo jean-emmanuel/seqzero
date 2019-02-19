@@ -55,12 +55,13 @@ Options:
 Transport commands:
 
 - `/sequencer <command>`, where `<command>` can be:
-  - `bpm <num>`
-  - `cursor <int>`
-  - `play`
-  - `pause`
-  - `stop`
-  - `trig`
+  - `bpm <num>`: set bpm
+  - `cursor <int>`: set cursor
+  - `play`: start playback
+  - `pause`: pause playback
+  - `stop`: pause and set cursor to 0
+  - `trig`: stop and play immediately
+  - `status`: send status and sequence's statuses
 
 
 Sequences commands:

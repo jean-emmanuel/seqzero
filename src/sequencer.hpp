@@ -72,6 +72,7 @@ class Sequencer
             SEQUENCER_PAUSE,
             SEQUENCER_STOP,
             SEQUENCER_TRIG,
+            SEQUENCER_STATUS,
 
             SEQUENCE_ENABLE,
             SEQUENCE_DISABLE,
@@ -87,6 +88,7 @@ class Sequencer
             {"pause",   SEQUENCER_PAUSE},
             {"stop",    SEQUENCER_STOP},
             {"trig",    SEQUENCER_TRIG},
+            {"status",  SEQUENCER_STATUS},
 
             {"enable",  SEQUENCE_ENABLE},
             {"disable", SEQUENCE_DISABLE},
