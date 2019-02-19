@@ -61,7 +61,18 @@ Transport commands:
   - `pause`: pause playback
   - `stop`: pause and set cursor to 0
   - `trig`: stop and play immediately
-  - `status`: send status and sequence's statuses
+  - `status`: send sequencer and sequences' status
+  - `write <str>`: write a sequence, `<str>` must be a valid JSON string
+
+
+JSON sequence:
+
+- `"address": "<str>"`, must start with a `/`
+- `"enabled": <bool>`
+- `"type": "<str>"`: osc message value type (`i`, `f` or `d`)
+- `"note": <bool>`: if `true`, `0` is sent when the sequence is disabled
+- `"length": <int>`: length in ticks
+- `"values": "<str>"`: `{"<int>": <num>, ...}` JSON set (`<int>` = time in ticks, `<num>` = osc message value)
 
 
 Sequences commands:
@@ -71,15 +82,6 @@ Sequences commands:
   - `disable`
   - `toggle`
   - `remove`
-
-Sequence writing:
-
-- `/sequence <address> write <str>`, where `<address>` must match a single sequence (no glob-pattern) and  `<str` is a json set of properties
-  - `"enabled": <bool>`
-  - `"type": "<str>"`: osc message value type (`i`, `f` or `d`)
-  - `"note": <bool>`: if `true`, `0` is sent when the sequence is disabled
-  - `"length": <int>`: length in ticks
-  - `"values": "<str>"`: `{"<int>": <num>, ...}` json set (`<int>` = time in ticks, `<num>` = osc message value)
 
 Feedback:
 

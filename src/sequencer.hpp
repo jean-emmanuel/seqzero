@@ -45,6 +45,7 @@ class Sequencer
         std::map<std::string, Sequence *> sequence_map;
 
         void sequence_add(std::string address, const char* type, std::map<int, double> values, int length, bool enabled, bool is_note);
+        void sequence_add_json(const char* json);
         void sequence_control(std::string address, int command);
 
         // Osc
@@ -60,7 +61,6 @@ class Sequencer
 
         static int osc_ctrl_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
         static int osc_seqctrl_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
-        static int osc_seqwrite_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data);
 
         void feed_status();
 
@@ -73,12 +73,13 @@ class Sequencer
             SEQUENCER_STOP,
             SEQUENCER_TRIG,
             SEQUENCER_STATUS,
+            SEQUENCER_WRITE,
 
             SEQUENCE_ENABLE,
             SEQUENCE_DISABLE,
             SEQUENCE_TOGGLE,
             SEQUENCE_REMOVE,
-            SEQUENCE_WRITE
+            SEQUENCE_STATUS
         };
 
         std::map<std::string, int> osc_commands = {
@@ -89,12 +90,15 @@ class Sequencer
             {"stop",    SEQUENCER_STOP},
             {"trig",    SEQUENCER_TRIG},
             {"status",  SEQUENCER_STATUS},
+            {"write",   SEQUENCER_WRITE},
+        };
 
+        std::map<std::string, int> osc_seq_commands = {
             {"enable",  SEQUENCE_ENABLE},
             {"disable", SEQUENCE_DISABLE},
             {"toggle",  SEQUENCE_TOGGLE},
             {"remove",  SEQUENCE_REMOVE},
-            {"write",   SEQUENCE_WRITE}
+            {"status",  SEQUENCE_STATUS}
         };
 
 };

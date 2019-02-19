@@ -159,6 +159,57 @@ void Sequencer::sequence_add(std::string address, const char* type,
 
 }
 
+
+void Sequencer::sequence_add_json(const char* json_str)
+{
+
+    json_object * json = json_tokener_parse(json_str);
+
+    if (!json) return;
+
+    json_object * walker;
+
+    std::string address;
+    bool is_note = false;
+    bool enabled = false;
+    int length = 0;
+    const char* osc_type = "f";
+    std::map<int, double> values;
+
+    if (json_object_object_get_ex(json, "address", &walker)) {
+        address = json_object_get_string(walker);
+    }
+
+    if (address.c_str()[0] !=  '/') return;
+
+    if (json_object_object_get_ex(json, "note", &walker)) {
+        is_note = json_object_get_boolean(walker);
+    }
+
+    if (json_object_object_get_ex(json, "enabled", &walker)) {
+        enabled = json_object_get_boolean(walker);
+    }
+
+    if (json_object_object_get_ex(json, "length", &walker)) {
+        length = json_object_get_int(walker);
+    }
+
+    if (json_object_object_get_ex(json, "type", &walker)) {
+        osc_type = json_object_get_string(walker);
+    }
+
+    if (json_object_object_get_ex(json, "values", &walker)) {
+        json_object_object_foreach(walker, key, val) {
+            int k = atoi(key);
+            values[k] = json_object_get_double(val);
+        }
+    }
+
+
+    sequence_add(address, osc_type, values, length, enabled, is_note);
+
+}
+
 void Sequencer::sequence_control(std::string address, int command)
 {
 
@@ -171,6 +222,9 @@ void Sequencer::sequence_control(std::string address, int command)
             break;
         case SEQUENCE_TOGGLE:
             sequence_map[address]->toggle();
+            break;
+        case SEQUENCE_STATUS:
+            sequence_map[address]->feed_status(false);
             break;
         case SEQUENCE_REMOVE:
             std::map<std::string, Sequence *>::iterator it = sequence_map.find(address);
@@ -196,9 +250,7 @@ void Sequencer::osc_init()
     }
 
     lo_server_thread_add_method(osc_server, "/sequencer", NULL, Sequencer::osc_ctrl_handler, this);
-
     lo_server_thread_add_method(osc_server, "/sequence", "ss", Sequencer::osc_seqctrl_handler, this);
-    lo_server_thread_add_method(osc_server, "/sequence", "sss", Sequencer::osc_seqwrite_handler, this);
 
     lo_server_thread_start(osc_server);
 
@@ -261,6 +313,11 @@ int Sequencer::osc_ctrl_handler(const char *path, const char *types, lo_arg **ar
                 sequencer->cursor = argv[1]->i;
             }
             break;
+        case SEQUENCER_WRITE:
+            if (argc > 1 && types[1] == 's') {
+                sequencer->sequence_add_json(&argv[1]->s);
+            }
+            break;
         case SEQUENCER_STATUS:
             sequencer->feed_status();
             for (auto& item: sequencer->sequence_map) {
@@ -284,7 +341,7 @@ int Sequencer::osc_seqctrl_handler(const char *path, const char *types, lo_arg *
 
     if (address.c_str()[0] !=  '/') return 0;
 
-    int command = sequencer->osc_commands[command_str];
+    int command = sequencer->osc_seq_commands[command_str];
 
     if (!command) return 0;
 
@@ -309,62 +366,6 @@ int Sequencer::osc_seqctrl_handler(const char *path, const char *types, lo_arg *
 
     }
 
-
-    return 0;
-
-}
-
-int Sequencer::osc_seqwrite_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
-{
-
-    Sequencer *sequencer = (Sequencer *) user_data;
-
-
-    std::string address = &argv[0]->s;
-    std::string command_str = &argv[1]->s;
-    const char * json_str = &argv[2]->s;
-
-    int command = sequencer->osc_commands[command_str];
-
-    if (address.c_str()[0] !=  '/' || command != SEQUENCE_WRITE) return 0;
-
-    json_object * json = json_tokener_parse(json_str);
-
-    if (!json) return 0;
-
-    json_object * walker;
-
-    bool is_note = false;
-    bool enabled = false;
-    int length = 0;
-    const char* osc_type = "f";
-    std::map<int, double> values;
-
-    if (json_object_object_get_ex(json, "note", &walker)) {
-        is_note = json_object_get_boolean(walker);
-    }
-
-    if (json_object_object_get_ex(json, "enabled", &walker)) {
-        enabled = json_object_get_boolean(walker);
-    }
-
-    if (json_object_object_get_ex(json, "length", &walker)) {
-        length = json_object_get_int(walker);
-    }
-
-    if (json_object_object_get_ex(json, "type", &walker)) {
-        osc_type = json_object_get_string(walker);
-    }
-
-    if (json_object_object_get_ex(json, "values", &walker)) {
-        json_object_object_foreach(walker, key, val) {
-            int k = atoi(key);
-            values[k] = json_object_get_double(val);
-        }
-    }
-
-
-    sequencer->sequence_add(address, osc_type, values, length, enabled, is_note);
 
     return 0;
 
