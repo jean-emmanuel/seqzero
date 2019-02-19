@@ -143,8 +143,13 @@ int main(int argc, char* argv[])
     signal(SIGTERM, &sighandler);
     signal(SIGINT, &sighandler);
 
+
+    struct timespec ts = {0};
+    ts.tv_nsec = 100000; // 0.1ms
+
     while (run) {
-        sleep(1);
+        sequencer->process();
+        nanosleep(&ts, NULL);
     }
 
     delete sequencer;

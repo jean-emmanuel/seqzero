@@ -13,7 +13,7 @@ Ideas
 
 - ultra-minimalist engine
   - runs with jack only
-  - takes audio samples from jack as time base
+  - uses jack time
   - sends osc only, routing or midi conversion is to be handled externally
   - no built-in ui, everything through osc
 

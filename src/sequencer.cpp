@@ -12,11 +12,11 @@ Sequencer::Sequencer(const char* osc_in_port, const char* osc_target_url, const 
 
     // Engine
 
-    elapsed_samples = 0;
-
     jack = new Jack();
-    sample_rate = jack_get_sample_rate(jack->jack_client);
-    jack->set_callback(jack_callback, this);
+    elapsed_time = jack_get_time();
+
+    // sample_rate = jack_get_sample_rate(jack->jack_client);
+    // jack->set_callback(jack_callback, this);
 
     // Transport
 
@@ -48,7 +48,7 @@ Sequencer::~Sequencer()
 void Sequencer::set_period(double p)
 {
 
-    period = p * sample_rate;
+    period = p * 1000000; // microseconds
 
 }
 
@@ -67,25 +67,33 @@ void Sequencer::set_bpm(float b)
 
 }
 
-int Sequencer::jack_callback (jack_nframes_t nframes, void *arg)
+void Sequencer::process()
 {
 
-    Sequencer *sequencer = (Sequencer *) arg;
+    jack_time_t jack_time = jack_get_time();
 
-    jack_nframes_t i;
-
-    if (!sequencer->playing) return 0;
-
-    for(i=0; i < nframes; i++)
-    {
-        sequencer->elapsed_samples += 1;
-        if (sequencer->elapsed_samples >= sequencer->period) {
-            sequencer->elapsed_samples = sequencer->elapsed_samples - sequencer->period;
-            sequencer->play_current();
-        }
+    if (!playing) {
+        elapsed_time = jack_time;
+        return;
     }
 
-    return 0;
+    jack_time_t delta = jack_time - elapsed_time;
+
+    int ticks = (int)(delta / period);
+
+    if (ticks > 0) {
+
+        int i;
+
+        for (i = 0; i < ticks; i++) {
+
+            play_current();
+
+        }
+
+        elapsed_time += ticks * period;
+
+    }
 
 }
 
@@ -135,7 +143,6 @@ void Sequencer::stop() {
 
     pause();
     cursor = 0;
-    elapsed_samples = 0;
 
 }
 
