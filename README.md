@@ -62,12 +62,12 @@ Transport commands:
   - `stop`: pause and set cursor to 0
   - `trig`: stop and play immediately
   - `status`: send sequencer and sequences' status
-  - `write <str>`: write a sequence, `<str>` must be a valid JSON string
+  - `write <str>`: write a sequence, `<str>` must be a valid JSON object string
 
 
-JSON sequence:
+JSON sequence properties:
 
-- `"address": "<str>"`, must start with a `/`
+- `"address": "<str>"`: must start with a `/`
 - `"enabled": <bool>`
 - `"type": "<str>"`: osc message value type (`i`, `f` or `d`)
 - `"note": <bool>`: if `true`, `0` is sent when the sequence is disabled
