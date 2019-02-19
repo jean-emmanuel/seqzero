@@ -15,7 +15,6 @@ class Sequencer
 
         // Engine
 
-        int sample_rate;
         double period;
         jack_time_t elapsed_time;
 

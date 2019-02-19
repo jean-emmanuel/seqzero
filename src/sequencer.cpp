@@ -15,9 +15,6 @@ Sequencer::Sequencer(const char* osc_in_port, const char* osc_target_url, const 
     jack = new Jack();
     elapsed_time = jack_get_time();
 
-    // sample_rate = jack_get_sample_rate(jack->jack_client);
-    // jack->set_callback(jack_callback, this);
-
     // Transport
 
     playing = false;
