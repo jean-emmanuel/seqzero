@@ -144,8 +144,10 @@ int main(int argc, char* argv[])
     signal(SIGINT, &sighandler);
 
 
-    struct timespec ts = {0};
-    ts.tv_nsec = 100000; // 0.1ms
+    struct timespec ts = {
+        .tv_sec = 0,
+        .tv_nsec = 100000
+    };
 
     while (run) {
         sequencer->process();

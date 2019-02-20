@@ -63,7 +63,7 @@ class Sequencer
 
         void feed_status();
 
-        enum {
+        enum OSC_COMMANDS {
             SEQUENCER_ZERO = 0,
             SEQUENCER_CURSOR,
             SEQUENCER_BPM,
