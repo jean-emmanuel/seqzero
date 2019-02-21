@@ -258,17 +258,21 @@ void Sequencer::osc_init()
 
     lo_server_thread_start(osc_server);
 
+    osc_proto = lo_server_get_protocol(lo_server_thread_get_server(osc_server));
+
 }
 
 
 void Sequencer::osc_send(std::string address, const char* type, double value)
 {
 
+    lo_server from = osc_proto == LO_UNIX ? NULL : lo_server_thread_get_server(osc_server);
+
     if (type[0] == 'i') {
         int ivalue = value;
-        lo_send_from(osc_target, lo_server_thread_get_server(osc_server), LO_TT_IMMEDIATE, address.c_str(), type, ivalue);
+        lo_send_from(osc_target, from, LO_TT_IMMEDIATE, address.c_str(), type, ivalue);
     } else {
-        lo_send_from(osc_target, lo_server_thread_get_server(osc_server), LO_TT_IMMEDIATE, address.c_str(), type, value);
+        lo_send_from(osc_target, from, LO_TT_IMMEDIATE, address.c_str(), type, value);
     }
 
 }
@@ -278,7 +282,9 @@ void Sequencer::osc_send_feed(std::string address, std::string json)
 
     if (osc_feedback_target) {
 
-        lo_send_from(osc_feedback_target, lo_server_thread_get_server(osc_server), LO_TT_IMMEDIATE, address.c_str(), "s", json.c_str());
+        lo_server from = osc_proto == LO_UNIX ? NULL : lo_server_thread_get_server(osc_server);
+
+        lo_send_from(osc_feedback_target, from, LO_TT_IMMEDIATE, address.c_str(), "s", json.c_str());
 
     }
 

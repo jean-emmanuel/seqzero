@@ -53,6 +53,7 @@ class Sequencer
         lo_address osc_feedback_target;
         const char* osc_port;
         lo_server osc_server;
+        int osc_proto;
 
         void osc_init();
         void osc_send(std::string address, const char* type, double value);
