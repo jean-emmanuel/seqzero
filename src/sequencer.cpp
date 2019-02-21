@@ -35,9 +35,16 @@ Sequencer::~Sequencer()
 {
 
     stop();
+
+    for (auto& item: sequence_map) {
+        delete item.second;
+    }
+    sequence_map.clear();
+
     lo_address_free(osc_target);
     lo_address_free(osc_feedback_target);
     lo_server_thread_free(osc_server);
+
     delete jack;
 
 }
