@@ -259,9 +259,9 @@ void Sequencer::osc_send(std::string address, const char* type, double value)
 
     if (type[0] == 'i') {
         int ivalue = value;
-        lo_send(osc_target, address.c_str(), type, ivalue);
+        lo_send_from(osc_target, lo_server_thread_get_server(osc_server), LO_TT_IMMEDIATE, address.c_str(), type, ivalue);
     } else {
-        lo_send(osc_target, address.c_str(), type, value);
+        lo_send_from(osc_target, lo_server_thread_get_server(osc_server), LO_TT_IMMEDIATE, address.c_str(), type, value);
     }
 
 }
@@ -271,7 +271,7 @@ void Sequencer::osc_send_feed(std::string address, std::string json)
 
     if (osc_feedback_target) {
 
-        lo_send(osc_feedback_target, address.c_str(), "s", json.c_str());
+        lo_send_from(osc_feedback_target, lo_server_thread_get_server(osc_server), LO_TT_IMMEDIATE, address.c_str(), "s", json.c_str());
 
     }
 
