@@ -12,8 +12,8 @@ Sequencer::Sequencer(const char* osc_in_port, const char* osc_target_url, const 
 
     // Engine
 
-    jack = new Jack();
-    elapsed_time = jack_get_time();
+    jack = new Jack(this, "SeqZero", true);
+    elapsed_time = jack->get_time();
 
     // Transport
 
@@ -68,13 +68,14 @@ void Sequencer::set_bpm(float b)
     }
 
     set_period(60. / bpm / Config::PPQN);
+    feed_status();
 
 }
 
 void Sequencer::process()
 {
 
-    jack_time_t jack_time = jack_get_time();
+    jack_time_t jack_time = jack->get_time();
 
     if (!playing) {
         elapsed_time = jack_time;
@@ -135,9 +136,11 @@ void Sequencer::play() {
 
 void Sequencer::pause() {
 
-    if (playing) notes_off();
-    playing = false;
-    feed_status();
+    if (playing) {
+        notes_off();
+        playing = false;
+        feed_status();
+    }
 
 }
 

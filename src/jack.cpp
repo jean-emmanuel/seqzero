@@ -3,11 +3,16 @@
 
 #include "jack.hpp"
 #include "config.hpp"
+#include "sequencer.hpp"
 
-Jack::Jack()
+Jack::Jack(Sequencer *seq, const char* name, bool _transport)
 {
 
-    client_name = "SeqZero";
+    sequencer = seq;
+    client_name = name;
+
+    transport = _transport;
+
     connect();
 
 }
@@ -50,14 +55,59 @@ void Jack::disconnect()
     jack_client_close(jack_client);
 }
 
-void Jack::set_callback(JackProcessCallback callback, void *arg)
+jack_time_t Jack::get_time()
 {
 
-    jack_set_process_callback(jack_client, callback, arg);
+    if (transport) {
 
-    if (jack_activate(jack_client)) {
-        fprintf (stderr, "cannot activate client");
-        exit(1);
+        jack_position_t jack_position;
+        jack_transport_state_t state = jack_transport_query	(jack_client, &jack_position);
+        jack_nframes_t jack_frame = jack_get_current_transport_frame(jack_client);
+
+        if (state != transport_state) {
+
+            switch (state) {
+
+                case JackTransportStopped:
+                    // printf( "[JackTransportStopped]\n" );
+                    sequencer->pause();
+                    break;
+
+                case JackTransportStarting:
+                    // printf( "[JackTransportStarting]\n" );
+
+                    sequencer->cursor = (long)
+                        jack_frame *
+                        jack_position.ticks_per_beat *
+                        jack_position.beats_per_minute / (jack_position.frame_rate * 60.0);
+
+                    sequencer->set_bpm(jack_position.beats_per_minute);
+                    sequencer->pause();
+
+                    break;
+
+                case JackTransportRolling:
+                    // printf( "[JackTransportRolling]\n" );
+                    sequencer->play();
+                    break;
+
+                case JackTransportNetStarting:
+                case JackTransportLooping:
+                    break;
+
+            }
+
+            transport_state = state;
+
+        }
+
+
+        return  1000000.0 * jack_frame / jack_position.frame_rate;
+
+    } else {
+
+        return jack_get_time();
+
     }
 
 }
