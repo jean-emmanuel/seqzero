@@ -7,12 +7,12 @@
 #include "config.hpp"
 #include "jack.hpp"
 
-Sequencer::Sequencer(const char* osc_in_port, const char* osc_target_url, const char* osc_feedback_url)
+Sequencer::Sequencer(const char* osc_in_port, const char* osc_target_url, const char* osc_feedback_url, bool jack_transport)
 {
 
     // Engine
 
-    jack = new Jack(this, "SeqZero", true);
+    jack = new Jack(this, "SeqZero", jack_transport);
     elapsed_time = jack->get_time();
 
     // Transport

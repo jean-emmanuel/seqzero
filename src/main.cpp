@@ -8,13 +8,14 @@
 #define DEFAULT_OSC_PORT "5244"
 #define DEFAULT_TARGET_URL "osc.udp://127.0.0.1:5245"
 
-const char* optstring = "p:t:f:s:vh";
+const char* optstring = "p:t:f:j:s:vh";
 
 struct option long_options[] = {
     { "help", 0, 0, 'h' },
     { "osc-port", 1, 0, 'p' },
     { "target", 1, 0, 't' },
     { "feedback", 1, 0, 'f' },
+    { "jack-transport", 0, 0, 'j' },
     { "stress-test", 0, 0, 's' },
     { "version", 0, 0, 'v' },
     { 0, 0, 0, 0 }
@@ -29,6 +30,7 @@ static void usage(char *argv0)
     fprintf(stderr, "  -p <str> , --osc-port=<str>      udp inport number or unix socket path for OSC server (default: %s)\n", DEFAULT_OSC_PORT);
     fprintf(stderr, "  -t <str> , --target-url=<str>    osc.udp or osc.unix target url for sequences messages (default: %s)\n", DEFAULT_TARGET_URL);
     fprintf(stderr, "  -f <str> , --feedback-url=<str>  osc.udp or osc.unix target url for sequencer feedback\n");
+    fprintf(stderr, "  -j <str> , --jack-transport      follow jack transport\n");
     fprintf(stderr, "  -h , --help                      this usage output\n");
     fprintf(stderr, "  -v , --version                   show version only\n");
 }
@@ -36,12 +38,14 @@ static void usage(char *argv0)
 struct OptionInfo
 {
     OptionInfo() :
-        port(DEFAULT_OSC_PORT), target(DEFAULT_TARGET_URL), feedback(),
+        port(DEFAULT_OSC_PORT), target(DEFAULT_TARGET_URL), feedback(), jack_transport(0),
         show_usage(0), show_version(0), stress_test(0) {}
 
     const char* port;
     const char* target;
     const char* feedback;
+
+    int jack_transport;
 
     int show_usage;
     int show_version;
@@ -76,6 +80,9 @@ static void parse_options (int argc, char **argv, OptionInfo & option_info)
             break;
         case 'f':
             option_info.feedback = optarg;
+            break;
+        case 'j':
+            option_info.jack_transport++;
             break;
         case 's':
             option_info.stress_test++;
@@ -117,7 +124,7 @@ int main(int argc, char* argv[])
 
     parse_options (argc, argv, option_info);
 
-    Sequencer * sequencer = new Sequencer(option_info.port, option_info.target, option_info.feedback);
+    Sequencer * sequencer = new Sequencer(option_info.port, option_info.target, option_info.feedback, option_info.jack_transport);
 
     if (option_info.stress_test) {
 
