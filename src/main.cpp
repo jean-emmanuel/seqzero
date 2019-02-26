@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
             sequencer->sequence_add(address.c_str(), type, values, length, enabled, is_note);
         }
 
-        sequencer->play();
+        sequencer->play(false);
 
     }
 

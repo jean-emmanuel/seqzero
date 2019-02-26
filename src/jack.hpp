@@ -25,5 +25,8 @@ class Jack
 
         bool transport;
         jack_transport_state_t transport_state;
+        void set_cursor(long c);
+        void play();
+        void pause();
 
 };

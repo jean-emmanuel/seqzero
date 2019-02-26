@@ -7,19 +7,17 @@
 #include "config.hpp"
 #include "jack.hpp"
 
-Sequencer::Sequencer(const char* osc_in_port, const char* osc_target_url, const char* osc_feedback_url, bool jack_transport)
+Sequencer::Sequencer(const char* osc_in_port, const char* osc_target_url, const char* osc_feedback_url, bool _jack_transport)
 {
 
     // Engine
-
-    jack = new Jack(this, "SeqZero", jack_transport);
+    jack = new Jack(this, "SeqZero", _jack_transport);
     elapsed_time = jack->get_time();
 
     // Transport
 
-    playing = false;
-    cursor = 0;
     set_bpm(Config::DEFAULT_BPM);
+    jack_transport = _jack_transport;
 
     // Osc
 
@@ -34,7 +32,7 @@ Sequencer::Sequencer(const char* osc_in_port, const char* osc_target_url, const 
 Sequencer::~Sequencer()
 {
 
-    stop();
+    notes_off();
 
     for (auto& item: sequence_map) {
         delete item.second;
@@ -108,7 +106,6 @@ void Sequencer::play_current()
     }
 
     feed_status();
-
     cursor += 1;
 
 }
@@ -122,39 +119,86 @@ void Sequencer::notes_off()
 
 }
 
+void Sequencer::set_cursor(long c, bool from_jack) {
 
-void Sequencer::play() {
+    if (jack_transport && !from_jack) {
 
-    if (playing) {
-        trig();
+        jack->set_cursor(c);
+
     } else {
-        playing = true;
-        feed_status();
+
+        cursor = c;
+
     }
 
 }
 
-void Sequencer::pause() {
+void Sequencer::play(bool from_jack) {
 
     if (playing) {
-        notes_off();
-        playing = false;
-        feed_status();
+
+        trig(from_jack);
+
+    } else {
+
+        if (jack_transport && !from_jack) {
+
+            jack->play();
+
+        } else {
+
+            playing = true;
+            feed_status();
+
+        }
+
+
     }
 
 }
 
-void Sequencer::stop() {
+void Sequencer::pause(bool from_jack) {
 
-    pause();
-    cursor = 0;
+    if (playing) {
+
+        if (jack_transport && !from_jack) {
+
+            jack->pause();
+
+        } else {
+
+            notes_off();
+            playing = false;
+            feed_status();
+
+        }
+
+
+    }
 
 }
 
-void Sequencer::trig() {
+void Sequencer::stop(bool from_jack) {
 
-    stop();
-    play();
+    pause(from_jack);
+    set_cursor(0, from_jack);
+
+}
+
+void Sequencer::trig(bool from_jack) {
+
+    if (jack_transport && !from_jack) {
+
+        jack->set_cursor(0);
+        jack->play();
+
+    } else {
+
+        stop(from_jack);
+        play(from_jack);
+
+    }
+
 
 }
 
@@ -304,16 +348,16 @@ int Sequencer::osc_ctrl_handler(const char *path, const char *types, lo_arg **ar
 
     switch(command) {
         case SEQUENCER_PLAY:
-            sequencer->play();
+            sequencer->play(false);
             break;
         case SEQUENCER_PAUSE:
-            sequencer->pause();
+            sequencer->pause(false);
             break;
         case SEQUENCER_STOP:
-            sequencer->stop();
+            sequencer->stop(false);
             break;
         case SEQUENCER_TRIG:
-            sequencer->trig();
+            sequencer->trig(false);
             break;
         case SEQUENCER_BPM:
             if (argc > 1) {
@@ -323,7 +367,7 @@ int Sequencer::osc_ctrl_handler(const char *path, const char *types, lo_arg **ar
             break;
         case SEQUENCER_CURSOR:
             if (argc > 1 && types[1] == 'i') {
-                sequencer->cursor = argv[1]->i;
+                sequencer->set_cursor(argv[1]->i, false);
             }
             break;
         case SEQUENCER_WRITE:

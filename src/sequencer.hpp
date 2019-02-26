@@ -25,18 +25,20 @@ class Sequencer
         // Transport
 
         float bpm;
-        long cursor;
-        bool playing;
+        long cursor = 0;
+        bool playing = false;
+        bool jack_transport;
 
         void set_period(double period);
         void set_bpm(float bpm);
         void play_current();
         void notes_off();
 
-        void play();
-        void pause();
-        void stop();
-        void trig();
+        void set_cursor(long c, bool from_jack);
+        void play(bool from_jack);
+        void pause(bool from_jack);
+        void stop(bool from_jack);
+        void trig(bool from_jack);
 
 
         // Sequences
