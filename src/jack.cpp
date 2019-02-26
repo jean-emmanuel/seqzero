@@ -87,10 +87,10 @@ jack_time_t Jack::get_time()
 
                 case JackTransportRolling:
                     // printf( "[JackTransportRolling]\n" );
-                    sequencer->set_cursor((long)
-                        jack_frame *
-                        Config::PPQN *
-                        sequencer->bpm / (jack_position.frame_rate * 60.0)
+                    sequencer->set_cursor(
+                        (1.0 * jack_frame / jack_position.frame_rate) *
+                        (sequencer->bpm / 60.0) *
+                        Config::PPQN
                     , true);
                     sequencer->play(true);
                     break;
