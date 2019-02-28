@@ -9,7 +9,7 @@ Ideas
 - ultra-minimalist engine
   - runs with jack only
   - uses jack time and
-  - (optional) follow jack tran sport
+  - (optional) follow jack transport
   - sends osc only, routing or midi conversion is to be handled externally
   - no built-in ui, everything through osc
 
@@ -32,7 +32,7 @@ Requires: `liblo`, `libjson-c`, `libstdc++`, `libjack`
 
 `apt install libstdc++-8-dev liblo-dev libjson-c-dev libjack-jackd2-dev`
 
-Run `./make` to build
+Run `make` to build
 
 **Usage**
 
@@ -49,30 +49,20 @@ Options:
 
 **OSC API**
 
-Transport commands:
+*Sequencer commands:*
 
 - `/sequencer <command>`, where `<command>` can be:
-  - `bpm <num>`: set bpm
+  - `bpm <num>`: set bpm (between 40 and 440)
   - `cursor <int>`: set cursor
   - `play`: start playback
   - `pause`: pause playback
   - `stop`: pause and set cursor to 0
   - `trig`: stop and play immediately
   - `status`: send sequencer and sequences' status
-  - `write <str>`: write a sequence, `<str>` must be a valid JSON object string
+  - `write <str>`: write a sequence, `<str>` is a JSON set of properties (see JSON sequence properties)
 
 
-JSON sequence properties:
-
-- `"address": "<str>"`: must start with a `/`
-- `"enabled": <bool>`
-- `"type": "<str>"`: osc message value type (`i`, `f` or `d`)
-- `"note": <bool>`: if `true`, `0` is sent when the sequence is disabled
-- `"length": <int>`: length in ticks
-- `"values": "<str>"`: `{"<int>": <num>, ...}` JSON set (`<int>` = time in ticks, `<num>` = osc message value)
-
-
-Sequences commands:
+*Sequences commands:*
 
 - `/sequence <address> <command>`, where `<address>` is a sequence's address or glob-pattern and `<command>`:
   - `enable`
@@ -80,17 +70,21 @@ Sequences commands:
   - `toggle`
   - `remove`
 
-Feedback:
+*Feedback:*
 
-- `/status/sequencer <str>`: where `<str>` is a json set of properties:
+- `/status/sequencer <str>`: where `<str>` is a JSON set of properties:
   - `"bpm": <num>`
   - `"cursor": <int>`
   - `"playing": <bool>`
 
-- `/status/sequence <str>`: where `<str>` is a json set of properties:
-  - `"address": "<str>"`
-  - `"enabled": <bool>`
-  - `"note": <bool>`
-  - `"values": {"<int>": <num>, ...}`
-  - `"length": <int>`
-  - `"removed": <bool>`
+- `/status/sequence <str>`: where `<str>` is a JSON set of properties (see JSON sequence properties)
+
+*JSON sequence properties:*
+
+- `"address": "<str>"`: must start with a `/`
+- `"enabled": <bool>`
+- `"type": "<str>"`: osc message value type (`i`, `f` or `d`)
+- `"note": <bool>`: if `true`, `0` is sent when the sequence is disabled
+- `"length": <int>`: length in ticks
+- `"values": "<str>"`: `{"<int>": <num>, ...}` JSON set (`<int>` = time in ticks, `<num>` = osc message value)
+- `"removed": <bool>`
