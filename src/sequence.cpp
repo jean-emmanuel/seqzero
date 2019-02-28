@@ -1,9 +1,11 @@
+#include <algorithm>
+
 #include "sequence.hpp"
 #include "sequencer.hpp"
 
 Sequence::Sequence(){} // empty default constructor for std::map
 
-Sequence::Sequence(Sequencer *seq, std::string osc_address, const char* osc_type, std::map<int, double> v, int seq_length, bool state, bool is_note)
+Sequence::Sequence(Sequencer *seq, std::string osc_address, const char* osc_type, ValueMap v, int seq_length, bool state, bool is_note)
 {
 
     sequencer = seq;
@@ -16,14 +18,16 @@ Sequence::Sequence(Sequencer *seq, std::string osc_address, const char* osc_type
         type = "i";
     }
 
-    enabled = state;
     values = v;
     length = seq_length;
 
     note = is_note;
     note_on = false;
 
+    if (state) enable();
+
     feed_status(false);
+
 
 }
 
@@ -38,6 +42,12 @@ Sequence::~Sequence()
 void Sequence::enable()
 {
 
+    SequenceVectorIterator it = find(sequencer->sequence_active.begin(), sequencer->sequence_active.end(), this);
+
+    if (it == sequencer->sequence_active.end()) {
+        sequencer->sequence_active.push_back(this);
+    }
+
     enabled = true;
     feed_status(false);
 
@@ -47,6 +57,12 @@ void Sequence::disable()
 {
 
     note_off();
+
+    SequenceVectorIterator it = find(sequencer->sequence_active.begin(), sequencer->sequence_active.end(), this);
+
+    if (it != sequencer->sequence_active.end()) {
+        sequencer->sequence_active.erase(it);
+    }
 
     enabled = false;
     feed_status(false);

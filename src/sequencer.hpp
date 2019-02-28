@@ -1,9 +1,17 @@
 #include <map>
+#include <vector>
 #include <lo/lo.h>
 
 #include "sequence.hpp"
 #include "config.hpp"
 #include "jack.hpp"
+
+typedef std::map<std::string, Sequence *> SequenceMap;
+typedef SequenceMap::iterator SequenceMapIterator;
+
+typedef std::vector<Sequence *> SequenceVector;
+typedef SequenceVector::iterator SequenceVectorIterator;
+
 
 class Sequencer
 {
@@ -43,7 +51,9 @@ class Sequencer
 
         // Sequences
 
-        std::map<std::string, Sequence *> sequence_map;
+        SequenceMap sequence_map;
+        SequenceVector sequence_active;
+
 
         void sequence_add(std::string address, const char* type, std::map<int, double> values, int length, bool enabled, bool is_note);
         void sequence_add_json(const char* json);

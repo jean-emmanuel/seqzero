@@ -34,6 +34,8 @@ Sequencer::~Sequencer()
 
     notes_off();
 
+    sequence_active.clear();
+    
     for (auto& item: sequence_map) {
         delete item.second;
     }
@@ -101,8 +103,8 @@ void Sequencer::process()
 void Sequencer::play_current()
 {
 
-    for (auto& item: sequence_map) {
-        item.second->play(cursor);
+    for (auto& item: sequence_active) {
+        item->play(cursor);
     }
 
     feed_status();
@@ -113,8 +115,8 @@ void Sequencer::play_current()
 void Sequencer::notes_off()
 {
 
-    for (auto& item: sequence_map) {
-        item.second->note_off();
+    for (auto& item: sequence_active) {
+        item->note_off();
     }
 
 }
@@ -203,7 +205,7 @@ void Sequencer::trig(bool from_jack) {
 }
 
 void Sequencer::sequence_add(std::string address, const char* type,
-                    std::map<int, double> values, int length, bool enabled, bool is_note)
+                    ValueMap values, int length, bool enabled, bool is_note)
 {
 
     sequence_map[address] = new Sequence(this, address, type, values, length, enabled, is_note);
@@ -225,7 +227,7 @@ void Sequencer::sequence_add_json(const char* json_str)
     bool enabled = false;
     int length = 0;
     const char* osc_type = "f";
-    std::map<int, double> values;
+    ValueMap values;
 
     if (json_object_object_get_ex(json, "address", &walker)) {
         address = json_object_get_string(walker);
@@ -278,7 +280,7 @@ void Sequencer::sequence_control(std::string address, int command)
             sequence_map[address]->feed_status(false);
             break;
         case SEQUENCE_REMOVE:
-            std::map<std::string, Sequence *>::iterator it = sequence_map.find(address);
+            SequenceMapIterator it = sequence_map.find(address);
             delete it->second;
             sequence_map.erase(it);
             break;
