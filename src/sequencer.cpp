@@ -34,8 +34,6 @@ Sequencer::~Sequencer()
 
     notes_off();
 
-    sequence_active.clear();
-    
     for (auto& item: sequence_map) {
         delete item.second;
     }
