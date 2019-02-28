@@ -130,6 +130,7 @@ int main(int argc, char* argv[])
 
         int i;
         for (i=0; i<1000; i++) {
+            std::string id = "/seq/" + std::to_string(i);
             std::string address = "/seq/" + std::to_string(i);
             const char* type = "f";
             std::map<int, double> values;
@@ -139,7 +140,7 @@ int main(int argc, char* argv[])
             int x = i % 91;
             values[x] = 1;
             values[x+91] = 2;
-            sequencer->sequence_add(address.c_str(), type, values, length, enabled, is_note);
+            sequencer->sequence_add(id, address, type, values, length, enabled, is_note);
         }
 
         sequencer->play(false);

@@ -5,11 +5,12 @@
 
 Sequence::Sequence(){} // empty default constructor for std::map
 
-Sequence::Sequence(Sequencer *seq, std::string osc_address, const char* osc_type, ValueMap v, int seq_length, bool state, bool is_note)
+Sequence::Sequence(Sequencer *seq, std::string _id, std::string osc_address, const char* osc_type, ValueMap v, int seq_length, bool state, bool is_note)
 {
 
     sequencer = seq;
 
+    id = _id;
     address = osc_address;
 
     type = osc_type;
@@ -114,7 +115,7 @@ void Sequence::feed_status(bool deleted)
 
     std::string json = "{";
 
-    json += "\"address\":\"" + address + "\",";
+    json += "\"id\":\"" + id + "\",";
 
     if (deleted) {
 
@@ -122,6 +123,7 @@ void Sequence::feed_status(bool deleted)
 
     } else {
 
+        json += "\"address\":\"" + address + "\",";
         json += "\"enabled\":" + std::to_string(enabled) + ",";
         json += "\"type\":\"" + (std::string)type + "\",";
         json += "\"note\":" + std::to_string(note) + ",";

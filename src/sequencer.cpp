@@ -26,6 +26,7 @@ Sequencer::Sequencer(const char* osc_in_port, const char* osc_target_url, const 
     osc_feedback_target = lo_address_new_from_url(osc_feedback_url);
 
     osc_init();
+    feed_status();
 
 }
 
@@ -202,11 +203,11 @@ void Sequencer::trig(bool from_jack) {
 
 }
 
-void Sequencer::sequence_add(std::string address, const char* type,
+void Sequencer::sequence_add(std::string id, std::string address, const char* type,
                     ValueMap values, int length, bool enabled, bool is_note)
 {
 
-    sequence_map[address] = new Sequence(this, address, type, values, length, enabled, is_note);
+    sequence_map[id] = new Sequence(this, id, address, type, values, length, enabled, is_note);
 
 }
 
@@ -220,12 +221,19 @@ void Sequencer::sequence_add_json(const char* json_str)
 
     json_object * walker;
 
+    std::string id;
     std::string address;
     bool is_note = false;
     bool enabled = false;
     int length = 0;
     const char* osc_type = "f";
     ValueMap values;
+
+    if (json_object_object_get_ex(json, "id", &walker)) {
+        id = json_object_get_string(walker);
+    }
+
+    if (id.c_str()[0] !=  '/') return;
 
     if (json_object_object_get_ex(json, "address", &walker)) {
         address = json_object_get_string(walker);
@@ -257,28 +265,28 @@ void Sequencer::sequence_add_json(const char* json_str)
     }
 
 
-    sequence_add(address, osc_type, values, length, enabled, is_note);
+    sequence_add(id, address, osc_type, values, length, enabled, is_note);
 
 }
 
-void Sequencer::sequence_control(std::string address, int command)
+void Sequencer::sequence_control(std::string id, int command)
 {
 
     switch(command) {
         case SEQUENCE_ENABLE:
-            sequence_map[address]->enable();
+            sequence_map[id]->enable();
             break;
         case SEQUENCE_DISABLE:
-            sequence_map[address]->disable();
+            sequence_map[id]->disable();
             break;
         case SEQUENCE_TOGGLE:
-            sequence_map[address]->toggle();
+            sequence_map[id]->toggle();
             break;
         case SEQUENCE_STATUS:
-            sequence_map[address]->feed_status(false);
+            sequence_map[id]->feed_status(false);
             break;
         case SEQUENCE_REMOVE:
-            SequenceMapIterator it = sequence_map.find(address);
+            SequenceMapIterator it = sequence_map.find(id);
             delete it->second;
             sequence_map.erase(it);
             break;
@@ -393,29 +401,29 @@ int Sequencer::osc_seqctrl_handler(const char *path, const char *types, lo_arg *
 
     Sequencer *sequencer = (Sequencer *) user_data;
 
-    std::string address = &argv[0]->s;
+    std::string id = &argv[0]->s;
     std::string command_str = &argv[1]->s;
 
-    if (address.c_str()[0] !=  '/') return 0;
+    if (id.c_str()[0] !=  '/') return 0;
 
     int command = sequencer->osc_seq_commands[command_str];
 
     if (!command) return 0;
 
-    if (sequencer->sequence_map.find(address) != sequencer->sequence_map.end()) {
+    if (sequencer->sequence_map.find(id) != sequencer->sequence_map.end()) {
 
-        sequencer->sequence_control(address, command);
+        sequencer->sequence_control(id, command);
 
     } else {
 
         for (auto item = sequencer->sequence_map.cbegin(); item != sequencer->sequence_map.cend();) {
 
-            std::string item_address = item->second->address;
+            std::string item_id = item->second->id;
             item++;
 
-            if (lo_pattern_match(item_address.c_str(), address.c_str())) {
+            if (lo_pattern_match(item_id.c_str(), id.c_str())) {
 
-                sequencer->sequence_control(item_address, command);
+                sequencer->sequence_control(item_id, command);
 
             }
 

@@ -64,7 +64,7 @@ Options:
 
 *Sequences commands:*
 
-- `/sequence <address> <command>`, where `<address>` is a sequence's address or glob-pattern and `<command>`:
+- `/sequence <id> <command>`, where `<id>` is a sequence id or glob-pattern and `<command>`:
   - `enable`
   - `disable`
   - `toggle`
@@ -81,6 +81,7 @@ Options:
 
 *JSON sequence properties:*
 
+- `"id": "<str>"`: unique, must start with a `/`
 - `"address": "<str>"`: must start with a `/`
 - `"enabled": <bool>`
 - `"type": "<str>"`: osc message value type (`i`, `f` or `d`)

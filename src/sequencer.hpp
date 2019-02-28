@@ -55,9 +55,9 @@ class Sequencer
         SequenceVector sequence_active;
 
 
-        void sequence_add(std::string address, const char* type, std::map<int, double> values, int length, bool enabled, bool is_note);
+        void sequence_add(std::string id, std::string address, const char* type, std::map<int, double> values, int length, bool enabled, bool is_note);
         void sequence_add_json(const char* json);
-        void sequence_control(std::string address, int command);
+        void sequence_control(std::string id, int command);
 
         // Osc
 

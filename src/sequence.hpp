@@ -13,11 +13,12 @@ class Sequence
 
         Sequence(); // empty default constructor for std::map
 
-        Sequence(Sequencer *seq, std::string osc_address, const char* osc_type, ValueMap values, int seq_length, bool enabled, bool is_note);
+        Sequence(Sequencer *seq, std::string id, std::string osc_address, const char* osc_type, ValueMap values, int seq_length, bool enabled, bool is_note);
         ~Sequence();
 
         Sequencer *sequencer;
 
+        std::string id;
         std::string address;
         const char* type;
 
