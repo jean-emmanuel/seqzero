@@ -4,16 +4,12 @@ Utra-minimalist osc sequencer
 
 *Work in progress...*
 
-Goals
-
-- learn C++
-- replace seq24 in my workflow
-
 Ideas
 
 - ultra-minimalist engine
   - runs with jack only
-  - uses jack time
+  - uses jack time and
+  - (optional) follow jack tran sport
   - sends osc only, routing or midi conversion is to be handled externally
   - no built-in ui, everything through osc
 
@@ -46,6 +42,7 @@ Options:
   -p <str> , --osc-port=<str>      udp inport number or unix socket path for OSC server (default: 5244)
   -t <str> , --target-url=<str>    osc.udp or osc.unix target url for sequences messages (default: osc.udp://127.0.0.1:5245)
   -f <str> , --feedback-url=<str>  osc.udp or osc.unix target url for sequencer feedback
+  -j <str> , --jack-transport      follow jack transport
   -h , --help                      this usage output
   -v , --version                   show version only
 ```
