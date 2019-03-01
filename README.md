@@ -77,6 +77,7 @@ Options:
   - `"bpm": <num>`
   - `"cursor": <int>`
   - `"playing": <bool>`
+  - `"bypass": <bool>`
 
 - `/status/sequence <str>`: where `<str>` is a JSON set of properties (see JSON sequence properties)
 
