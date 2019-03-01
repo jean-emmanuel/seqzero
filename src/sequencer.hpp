@@ -35,6 +35,7 @@ class Sequencer
         float bpm;
         long cursor = 0;
         bool playing = false;
+        bool bypass = false;
         bool jack_transport;
 
         void set_period(double period);
@@ -42,6 +43,7 @@ class Sequencer
         void play_current();
         void notes_off();
 
+        void set_bypass(bool b);
         void set_cursor(long c, bool from_jack);
         void play(bool from_jack);
         void pause(bool from_jack);
@@ -84,6 +86,7 @@ class Sequencer
             SEQUENCER_PAUSE,
             SEQUENCER_STOP,
             SEQUENCER_TRIG,
+            SEQUENCER_BYPASS,
             SEQUENCER_STATUS,
             SEQUENCER_WRITE,
 
@@ -101,6 +104,7 @@ class Sequencer
             {"pause",   SEQUENCER_PAUSE},
             {"stop",    SEQUENCER_STOP},
             {"trig",    SEQUENCER_TRIG},
+            {"bypass",  SEQUENCER_BYPASS},
             {"status",  SEQUENCER_STATUS},
             {"write",   SEQUENCER_WRITE},
         };

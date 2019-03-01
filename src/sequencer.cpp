@@ -102,8 +102,10 @@ void Sequencer::process()
 void Sequencer::play_current()
 {
 
-    for (auto& item: sequence_active) {
-        item->play(cursor);
+    if (!bypass) {
+        for (auto& item: sequence_active) {
+            item->play(cursor);
+        }
     }
 
     feed_status();
@@ -131,6 +133,14 @@ void Sequencer::set_cursor(long c, bool from_jack) {
         cursor = c;
 
     }
+
+}
+
+void Sequencer::set_bypass(bool b) {
+
+    if (b && !bypass) notes_off();
+
+    bypass = b;
 
 }
 
@@ -367,6 +377,11 @@ int Sequencer::osc_ctrl_handler(const char *path, const char *types, lo_arg **ar
         case SEQUENCER_TRIG:
             sequencer->trig(false);
             break;
+        case SEQUENCER_BYPASS:
+            if (argc > 1 && types[1] == 'i') {
+                sequencer->set_bypass(argv[1]->i);
+            }
+            break;
         case SEQUENCER_BPM:
             if (argc > 1) {
                 if (types[1] == 'i') sequencer->set_bpm(argv[1]->i);
@@ -443,6 +458,7 @@ void Sequencer::feed_status() {
     json += "\"bpm\":" + std::to_string(bpm) + ",";
     json += "\"cursor\":" + std::to_string(cursor) + ",";
     json += "\"playing\":" + std::to_string(playing);
+    json += "\"bypass\":" + std::to_string(bypass);
 
     json += "}";
 

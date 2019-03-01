@@ -54,6 +54,7 @@ Options:
 - `/sequencer <command>`, where `<command>` can be:
   - `bpm <num>`: set bpm (between 40 and 440)
   - `cursor <int>`: set cursor
+  - `bypass <int>`: set bypass (doesn't stop playback but prevents messages from being sent) 
   - `play`: start playback
   - `pause`: pause playback
   - `stop`: pause and set cursor to 0
