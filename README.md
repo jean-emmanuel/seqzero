@@ -83,11 +83,11 @@ Options:
 
 *JSON sequence properties:*
 
-- `"id": "<str>"`: unique, must start with a `/`
-- `"address": "<str>"`: must start with a `/`
-- `"enabled": <bool>`
-- `"type": "<str>"`: osc message value type (`i`, `f` or `d`)
-- `"note": <bool>`: if `true`, `0` is sent when the sequence is disabled
-- `"length": <int>`: length in ticks
+- `"id": "<str>"`: unique, must start with a `/` (required)
+- `"address": "<str>"`: must start with a `/` (default: `id`)
+- `"enabled": <bool>`: (default: `false`)
+- `"type": "<str>"`: osc message value type `i`, `f` or `d` (default: `f`)
+- `"note": <bool>`: if `true`, `0` is sent when the sequence is disabled (default: `false`)
+- `"length": <int>`: length in ticks (default: `0`)
 - `"values": "<str>"`: `{"<int>": <num>, ...}` JSON set (`<int>` = time in ticks, `<num>` = osc message value)
-- `"removed": <bool>`
+- `"removed": <bool>` (only in feedback messages)

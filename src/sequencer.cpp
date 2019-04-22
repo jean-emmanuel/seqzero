@@ -249,6 +249,8 @@ void Sequencer::sequence_add_json(const char* json_str)
         address = json_object_get_string(walker);
     }
 
+    if (address.length() == 0) address = id;
+
     if (address.c_str()[0] !=  '/') return;
 
     if (json_object_object_get_ex(json, "note", &walker)) {
