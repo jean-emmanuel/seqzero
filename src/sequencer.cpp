@@ -315,7 +315,13 @@ void Sequencer::osc_init()
 {
 
     osc_proto = std::string(osc_port).find(std::string("osc.unix")) != std::string::npos ? LO_UNIX : LO_DEFAULT;
-    osc_server = lo_server_thread_new_with_proto(osc_port, osc_proto, osc_error);
+
+    if (osc_proto == LO_UNIX) {
+        osc_server = lo_server_thread_new_from_url(osc_port, osc_error);
+    } else {
+        osc_server = lo_server_thread_new(osc_port, osc_error);
+    }
+
 
     if (!osc_server) {
         exit(1);
