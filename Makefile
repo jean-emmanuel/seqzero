@@ -9,7 +9,7 @@ all: $(PROG)
 
 $(PROG): $(OBJ)
 	$(info Edition des liens)
-	$(CXX) $(LDFLAGS) -o $@ $^
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
 %.o: %.cpp
 	$(info Compilation de $^ vers $@)
