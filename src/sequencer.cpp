@@ -459,7 +459,7 @@ void Sequencer::feed_status() {
 
     json += "\"bpm\":" + std::to_string(bpm) + ",";
     json += "\"cursor\":" + std::to_string(cursor) + ",";
-    json += "\"playing\":" + std::to_string(playing);
+    json += "\"playing\":" + std::to_string(playing) + ",";
     json += "\"bypass\":" + std::to_string(bypass);
 
     json += "}";
