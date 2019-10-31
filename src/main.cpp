@@ -27,7 +27,7 @@ static void usage(char *argv0)
 
     fprintf(stderr, "Usage: %s [options...]\n", argv0);
     fprintf(stderr, "Options:\n");
-    fprintf(stderr, "  -p <str> , --osc-port=<str>      udp inport number or unix socket path for OSC server (default: %s)\n", DEFAULT_OSC_PORT);
+    fprintf(stderr, "  -p <str> , --osc-port=<str>      udp in port number or unix socket path for OSC server (default: %s)\n", DEFAULT_OSC_PORT);
     fprintf(stderr, "  -t <str> , --target-url=<str>    osc.udp or osc.unix target url for sequences messages (default: %s)\n", DEFAULT_TARGET_URL);
     fprintf(stderr, "  -f <str> , --feedback-url=<str>  osc.udp or osc.unix target url for sequencer feedback\n");
     fprintf(stderr, "  -j , --jack-transport            follow jack transport\n");

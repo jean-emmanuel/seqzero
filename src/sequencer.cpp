@@ -314,7 +314,8 @@ void osc_error(int num, const char *m, const char *path)
 void Sequencer::osc_init()
 {
 
-    osc_server = lo_server_thread_new(osc_port, osc_error);
+    osc_proto = std::string(osc_port).find(std::string("osc.unix")) != std::string::npos ? LO_UNIX : LO_DEFAULT;
+    osc_server = lo_server_thread_new_with_proto(osc_port, osc_proto, osc_error);
 
     if (!osc_server) {
         exit(1);
@@ -324,8 +325,6 @@ void Sequencer::osc_init()
     lo_server_thread_add_method(osc_server, "/sequence", "ss", Sequencer::osc_seqctrl_handler, this);
 
     lo_server_thread_start(osc_server);
-
-    osc_proto = lo_server_get_protocol(lo_server_thread_get_server(osc_server));
 
 }
 
