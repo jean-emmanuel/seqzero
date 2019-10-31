@@ -13,8 +13,8 @@ const char* optstring = "p:t:f:j:s:vh";
 struct option long_options[] = {
     { "help", 0, 0, 'h' },
     { "osc-port", 1, 0, 'p' },
-    { "target", 1, 0, 't' },
-    { "feedback", 1, 0, 'f' },
+    { "target-url", 1, 0, 't' },
+    { "feedback-url", 1, 0, 'f' },
     { "jack-transport", 0, 0, 'j' },
     { "stress-test", 0, 0, 's' },
     { "version", 0, 0, 'v' },
