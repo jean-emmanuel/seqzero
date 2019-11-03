@@ -1,4 +1,4 @@
-# seqz
+# seqzero
 
 Utra-minimalist osc sequencer
 
@@ -37,7 +37,7 @@ Run `make` to build
 **Usage**
 
 ```
-Usage: ./seqz [options...]
+Usage: ./seqzero [options...]
 Options:
   -p <str> , --osc-port=<str>      udp inport number or unix socket path for OSC server (default: 5244)
   -t <str> , --target-url=<str>    osc.udp or osc.unix target url for sequences messages (default: osc.udp://127.0.0.1:5245)

@@ -11,7 +11,7 @@ Sequencer::Sequencer(const char* osc_in_port, const char* osc_target_url, const 
 {
 
     // Engine
-    jack = new Jack(this, "seqz", _jack_transport);
+    jack = new Jack(this, "seqzero", _jack_transport);
     elapsed_time = jack->get_time();
 
     // Transport

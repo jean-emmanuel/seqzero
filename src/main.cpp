@@ -23,7 +23,7 @@ struct option long_options[] = {
 
 static void usage(char *argv0)
 {
-    fprintf(stderr, "seqz\n\n");
+    fprintf(stderr, "seqzero\n\n");
 
     fprintf(stderr, "Usage: %s [options...]\n", argv0);
     fprintf(stderr, "Options:\n");
@@ -104,7 +104,7 @@ static void parse_options (int argc, char **argv, OptionInfo & option_info)
     }
 
     if (option_info.show_version) {
-        fprintf(stdout, "seqz version %s\n", "0.0.0");
+        fprintf(stdout, "seqzero version %s\n", "0.0.0");
         exit(0);
     }
 }
